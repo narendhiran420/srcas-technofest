@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #a855f7 transparent;
+}
+*::-webkit-scrollbar { width: 8px; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #a855f7, #22d3ee);
+  border-radius: 8px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  @apply font-body bg-ink-950 text-paper-100 antialiased transition-colors duration-500;
+}
+
+html.light body {
+  @apply bg-paper-50 text-ink-900;
+}
+
+@layer components {
+  /* Core glassmorphism card used across the site */
+  .glass-card {
+    @apply relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl
+           shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-all duration-500;
+  }
+  html.light .glass-card {
+    @apply border-ink-900/10 bg-white/60 shadow-[0_8px_32px_rgba(30,20,80,0.08)];
+  }
+
+  .neon-border {
+    @apply border border-transparent bg-gradient-to-r from-neon-blue/40 via-neon-purple/40 to-neon-cyan/40;
+  }
+
+  .gradient-text {
+    @apply bg-aurora bg-clip-text text-transparent;
+  }
+
+  .btn-glow {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full px-7 py-3
+           font-semibold text-white bg-aurora bg-[length:200%_200%] transition-all duration-500
+           shadow-glow hover:shadow-glow-purple hover:scale-[1.04] active:scale-95;
+    background-position: 0% 50%;
+  }
+  .btn-glow:hover { background-position: 100% 50%; }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 font-semibold
+           border border-white/20 text-paper-100 backdrop-blur-md transition-all duration-300
+           hover:border-neon-cyan/60 hover:text-neon-cyan hover:shadow-glow-cyan;
+  }
+  html.light .btn-outline { @apply border-ink-900/20 text-ink-900; }
+
+  .section-eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.35em] text-neon-cyan/80;
+  }
+
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+/* Custom cursor (desktop only, see CustomCursor component) */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+.cursor-dot { width: 8px; height: 8px; background: #22d3ee; }
+.cursor-ring { width: 34px; height: 34px; border: 1.5px solid rgba(168,85,247,0.8); transition: width .2s, height .2s; }
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 9998;
+  background: linear-gradient(90deg, #3b82f6, #a855f7, #22d3ee);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
