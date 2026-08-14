@@ -41,7 +41,7 @@ export default function App() {
   const location = useLocation();
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1400);
+    const t = setTimeout(() => setLoading(false), 2200);
     return () => clearTimeout(t);
   }, []);
 

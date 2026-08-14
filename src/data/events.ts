@@ -7,14 +7,24 @@ export interface EventItem {
   date: string;
   time: string;
   venue: string;
+
+  // Display fee
   fee: string;
+
+  // Actual payment amount
+  // ₹100 for every event
+  feeAmount: number;
+
   prize: string;
+
   rules: string[];
+
   coordinators: {
     faculty: string;
     student: string;
     phone: string;
   }[];
+
   teamEvent: boolean;
 }
 
@@ -38,7 +48,9 @@ export const events: EventItem[] = [
     time: '10:00 AM – 11:30 AM',
     venue: FEAST_VENUE,
 
-    fee: '₹100 per head',
+    fee: '₹100',
+    feeAmount: 100,
+
     prize: 'Certificates',
 
     rules: [
@@ -75,7 +87,9 @@ export const events: EventItem[] = [
     time: '10:00 AM – 1:00 PM',
     venue: FEAST_VENUE,
 
-    fee: '₹150 per team',
+    fee: '₹100',
+    feeAmount: 100,
+
     prize: 'Certificates',
 
     rules: [
@@ -112,7 +126,9 @@ export const events: EventItem[] = [
     time: '11:30 AM – 1:00 PM',
     venue: FEAST_VENUE,
 
-    fee: '₹100 per head',
+    fee: '₹100',
+    feeAmount: 100,
+
     prize: 'Certificates',
 
     rules: [
@@ -149,7 +165,9 @@ export const events: EventItem[] = [
     time: '1:30 PM – 3:00 PM',
     venue: FEAST_VENUE,
 
-    fee: '₹100 per head',
+    fee: '₹100',
+    feeAmount: 100,
+
     prize: 'Certificates',
 
     rules: [
@@ -186,7 +204,9 @@ export const events: EventItem[] = [
     time: '1:30 PM – 3:00 PM',
     venue: FEAST_VENUE,
 
-    fee: '₹100 per team',
+    fee: '₹100',
+    feeAmount: 100,
+
     prize: 'Certificates',
 
     rules: [
@@ -223,7 +243,9 @@ export const events: EventItem[] = [
     time: '11:00 AM – 12:30 PM',
     venue: FEAST_VENUE,
 
-    fee: '₹150 per team',
+    fee: '₹100',
+    feeAmount: 100,
+
     prize: 'Certificates',
 
     rules: [

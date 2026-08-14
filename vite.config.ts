@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'SRCAS B.Sc IT — Techno Feast 2026',
         short_name: 'Techno Feast 2026',
-        description: 'Official Department of B.Sc. Information Technology — Sri Ramakrishna College of Arts and Science, Coimbatore',
+        description: 'Official Department of B.Sc. Information Technology — Sri Ramakrishna College of Arts &  Science, Coimbatore',
         theme_color: '#05060f',
         background_color: '#05060f',
         display: 'standalone',

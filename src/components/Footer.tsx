@@ -11,7 +11,7 @@ export default function Footer() {
             <span className="gradient-text">B.Sc. IT · SRCAS</span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-paper-100/60">
-            Department of B.Sc. Information Technology, Sri Ramakrishna College of Arts and Science, Coimbatore.
+            Department of B.Sc. Information Technology, Sri Ramakrishna College of Arts &  Science, Coimbatore.
           </p>
           <div className="mt-5 flex gap-3">
             {[FiInstagram, FiLinkedin, FiYoutube].map((Icon, i) => (

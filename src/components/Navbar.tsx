@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMenu, FiX } from 'react-icons/fi';
+
 import ThemeToggle from './ThemeToggle';
 import SearchBar from './SearchBar';
 import NotificationBell from './NotificationBell';
@@ -22,9 +23,15 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+    };
+
     window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   return (
@@ -38,62 +45,156 @@ export default function Navbar() {
           scrolled ? 'glass-card py-2' : 'bg-transparent py-2'
         }`}
       >
-        <NavLink to="/" className="flex items-center gap-2 font-display text-sm font-bold tracking-wide sm:text-base">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-aurora text-white">IT</span>
-          <span className="hidden gradient-text sm:inline">B.Sc. IT · SRCAS</span>
+        {/* ================================
+            SRCAS LOGO + BRAND
+        ================================= */}
+        <NavLink
+          to="/"
+          className="flex items-center gap-3 font-display font-bold tracking-wide"
+        >
+          {/* Circular SRCAS Logo */}
+          <div
+            className="
+              flex
+              h-12
+              w-12
+              shrink-0
+              items-center
+              justify-center
+              overflow-hidden
+              rounded-full
+              border-2
+              border-white/20
+              bg-white
+              shadow-lg
+              transition-all
+              duration-300
+              hover:scale-105
+              hover:border-white/40
+              sm:h-14
+              sm:w-14
+            "
+          >
+            <img
+              src="/assets/logo-college.png"
+              alt="SRCAS Logo"
+              className="h-full w-full object-contain p-1"
+            />
+          </div>
+
+          {/* Brand Text */}
+          <div className="hidden sm:block">
+            <span className="block gradient-text text-sm font-bold sm:text-base">
+              B.Sc. IT · SRCAS
+            </span>
+
+            <span className="block text-[10px] font-medium tracking-wider text-paper-100/60">
+              TECHNO FEAST 2026
+            </span>
+          </div>
         </NavLink>
 
+        {/* ================================
+            DESKTOP NAVIGATION
+        ================================= */}
         <div className="hidden items-center gap-1 lg:flex">
-          {links.map((l) => (
+          {links.map((link) => (
             <NavLink
-              key={l.to}
-              to={l.to}
+              key={link.to}
+              to={link.to}
               className={({ isActive }) =>
                 `relative rounded-full px-3 py-2 text-xs font-medium tracking-wide transition-colors xl:text-sm ${
-                  isActive ? 'text-neon-cyan' : 'text-paper-100/70 hover:text-paper-100'
+                  isActive
+                    ? 'text-neon-cyan'
+                    : 'text-paper-100/70 hover:text-paper-100'
                 }`
               }
             >
-              {l.label}
+              {link.label}
             </NavLink>
           ))}
         </div>
 
+        {/* ================================
+            RIGHT SIDE CONTROLS
+        ================================= */}
         <div className="flex items-center gap-2">
           <SearchBar />
+
           <MusicToggle />
+
           <NotificationBell />
+
           <ThemeToggle />
+
+          {/* Mobile Menu Button */}
           <button
-            aria-label="Toggle menu"
-            onClick={() => setOpen((o) => !o)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 backdrop-blur-md lg:hidden"
+            type="button"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            onClick={() => setOpen((previous) => !previous)}
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-full
+              border
+              border-white/15
+              bg-white/5
+              backdrop-blur-md
+              transition-all
+              duration-300
+              hover:bg-white/10
+              lg:hidden
+            "
           >
-            {open ? <FiX /> : <FiMenu />}
+            {open ? <FiX size={20} /> : <FiMenu size={20} />}
           </button>
         </div>
       </nav>
 
+      {/* ================================
+          MOBILE MENU
+      ================================= */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            initial={{
+              opacity: 0,
+              y: -10,
+              scale: 0.98,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+              scale: 0.98,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
             className="glass-card mx-4 mt-2 flex flex-col gap-1 p-4 lg:hidden"
           >
-            {links.map((l) => (
+            {links.map((link) => (
               <NavLink
-                key={l.to}
-                to={l.to}
+                key={link.to}
+                to={link.to}
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `rounded-xl px-4 py-3 text-sm font-medium ${
-                    isActive ? 'bg-white/10 text-neon-cyan' : 'text-paper-100/80'
+                  `rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-white/10 text-neon-cyan'
+                      : 'text-paper-100/80 hover:bg-white/5 hover:text-paper-100'
                   }`
                 }
               >
-                {l.label}
+                {link.label}
               </NavLink>
             ))}
           </motion.div>
