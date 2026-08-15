@@ -13,6 +13,10 @@ const links = [
   { to: '/about', label: 'About Department' },
   { to: '/technofeast', label: 'Techno Feast 2026' },
   { to: '/events', label: 'Events' },
+
+  // NEX IT
+  { to: '/nex-it', label: 'NEX IT' },
+
   { to: '/registration', label: 'Registration' },
   { to: '/student-corner', label: 'Student Corner' },
   { to: '/contact', label: 'Contact' },

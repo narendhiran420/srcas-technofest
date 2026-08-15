@@ -1,9 +1,14 @@
 import {
   addDoc,
   collection,
-} from 'firebase/firestore';
+  serverTimestamp,
+} from "firebase/firestore";
 
-import { db } from './config';
+import { db } from "./config";
+
+/* =====================================================
+   TECHNO FEAST REGISTRATION DATA
+===================================================== */
 
 export interface RegistrationData {
   fullName: string;
@@ -15,43 +20,141 @@ export interface RegistrationData {
   email: string;
   teamName?: string;
   teamMembers?: string;
+
   eventName: string;
   eventId: string;
+  section: string;
+  fee: number | string;
 }
+
+/* =====================================================
+   SUBMIT TECHNO FEAST REGISTRATION
+===================================================== */
 
 export async function submitRegistration(
   data: RegistrationData
-): Promise<string> {
+) {
   try {
-    const registration = {
+    /* =================================================
+       VALIDATION
+    ================================================= */
+
+    if (!data.fullName?.trim()) {
+      throw new Error("Full name is required");
+    }
+
+    if (!data.registerNumber?.trim()) {
+      throw new Error("Register number is required");
+    }
+
+    if (!data.department?.trim()) {
+      throw new Error("Department is required");
+    }
+
+    if (!data.year?.trim()) {
+      throw new Error("Year is required");
+    }
+
+    if (!data.collegeName?.trim()) {
+      throw new Error("College name is required");
+    }
+
+    if (!data.mobile?.trim()) {
+      throw new Error("Mobile number is required");
+    }
+
+    if (!data.email?.trim()) {
+      throw new Error("Email is required");
+    }
+
+    if (!data.eventName?.trim()) {
+      throw new Error("Event name is required");
+    }
+
+    /* =================================================
+       FIRESTORE DATA
+    ================================================= */
+
+    const registrationData = {
       fullName: data.fullName.trim(),
-      registerNumber: data.registerNumber.trim(),
-      department: data.department.trim(),
-      year: data.year.trim(),
-      collegeName: data.collegeName.trim(),
-      mobile: data.mobile.trim(),
-      email: data.email.trim().toLowerCase(),
-      teamName: data.teamName?.trim() || '',
-      teamMembers: data.teamMembers?.trim() || '',
-      eventName: data.eventName,
-      eventId: data.eventId,
-      createdAt: new Date().toISOString(),
+
+      registerNumber:
+        data.registerNumber.trim(),
+
+      department:
+        data.department.trim(),
+
+      year:
+        data.year.trim(),
+
+      collegeName:
+        data.collegeName.trim(),
+
+      mobile:
+        data.mobile.trim(),
+
+      email:
+        data.email.trim().toLowerCase(),
+
+      teamName:
+        data.teamName?.trim() || "",
+
+      teamMembers:
+        data.teamMembers?.trim() || "",
+
+      eventName:
+        data.eventName.trim(),
+
+      eventId:
+        data.eventId,
+
+      section:
+        data.section,
+
+      fee:
+        data.fee,
+
+      /* Identifies this as Techno Feast */
+
+      registrationType:
+        "TECHNO FEAST",
+
+      /* Server-side Firebase timestamp */
+
+      createdAt:
+        serverTimestamp(),
     };
 
-    const docRef = await addDoc(
-      collection(db, 'registrations'),
-      registration
-    );
+    /* =================================================
+       SAVE TO FIRESTORE
+       
+       Collection:
+       registrations
+    ================================================= */
+
+    const documentReference =
+      await addDoc(
+        collection(
+          db,
+          "registrations"
+        ),
+        registrationData
+      );
 
     console.log(
-      'Registration saved:',
-      docRef.id
+      "Techno Feast registration saved:",
+      documentReference.id
     );
 
-    return docRef.id;
+    return {
+      success: true,
+      id: documentReference.id,
+    };
+
   } catch (error) {
+
     console.error(
-      'Firebase registration failed:',
+      "Techno Feast registration failed:",
       error
     );
 

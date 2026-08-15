@@ -1,10 +1,24 @@
-import { useState, FormEvent } from 'react';
+import {
+  useState,
+  FormEvent,
+} from 'react';
+
 import { motion } from 'framer-motion';
-import { FiLoader, FiCheckCircle } from 'react-icons/fi';
+
+import {
+  FiLoader,
+  FiCheckCircle,
+} from 'react-icons/fi';
 
 import { EventItem } from '../data/events';
-import { submitRegistration } from '../firebase/registrations';
-import { sendConfirmationEmail } from '../utils/emailjs';
+
+import {
+  submitRegistration,
+} from '../firebase/registrations';
+
+import {
+  sendConfirmationEmail,
+} from '../utils/emailjs';
 
 interface FormState {
   fullName: string;
@@ -35,30 +49,47 @@ export default function RegistrationForm({
 }: {
   event: EventItem;
 }) {
-  const [form, setForm] = useState<FormState>(initialState);
 
-  const [status, setStatus] = useState<
-    'idle' | 'submitting' | 'success' | 'error'
-  >('idle');
+  const [form, setForm] =
+    useState<FormState>(
+      initialState
+    );
 
-  const [error, setError] = useState('');
+  const [status, setStatus] =
+    useState<
+      'idle' |
+      'submitting' |
+      'success' |
+      'error'
+    >('idle');
+
+  const [error, setError] =
+    useState('');
+
+  const isNexIT =
+    event.section === 'NEX IT';
 
   function update<K extends keyof FormState>(
     key: K,
     value: FormState[K]
   ) {
+
     setForm((current) => ({
       ...current,
       [key]: value,
     }));
+
   }
 
   async function handleSubmit(
     e: FormEvent<HTMLFormElement>
   ) {
+
     e.preventDefault();
 
-    if (status === 'submitting') {
+    if (
+      status === 'submitting'
+    ) {
       return;
     }
 
@@ -66,39 +97,88 @@ export default function RegistrationForm({
     setError('');
 
     try {
-      // Save registration to Firebase
+
       await submitRegistration({
-        fullName: form.fullName,
-        registerNumber: form.registerNumber,
-        department: form.department,
-        year: form.year,
-        collegeName: form.collegeName,
-        mobile: form.mobile,
-        email: form.email,
-        teamName: form.teamName,
-        teamMembers: form.teamMembers,
-        eventName: event.name,
-        eventId: event.id,
+
+        fullName:
+          form.fullName,
+
+        registerNumber:
+          form.registerNumber,
+
+        department:
+          form.department,
+
+        year:
+          form.year,
+
+        collegeName:
+          form.collegeName,
+
+        mobile:
+          form.mobile,
+
+        email:
+          form.email,
+
+        teamName:
+          form.teamName,
+
+        teamMembers:
+          form.teamMembers,
+
+        eventName:
+          event.name,
+
+        eventId:
+          event.id,
+
+        section:
+          event.section,
+
+        fee:
+          event.fee,
+
       });
 
-      // Email is optional.
-      // Registration remains successful even if EmailJS fails.
       try {
+
         await sendConfirmationEmail({
-          to_name: form.fullName,
-          to_email: form.email,
-          event_name: event.name,
+
+          to_name:
+            form.fullName,
+
+          to_email:
+            form.email,
+
+          event_name:
+            event.name,
+
         });
-      } catch (emailError) {
+
+      } catch (
+        emailError
+      ) {
+
         console.warn(
           'Confirmation email failed:',
           emailError
         );
+
       }
 
-      setForm(initialState);
-      setStatus('success');
-    } catch (firebaseError) {
+      setForm(
+        initialState
+      );
+
+      setStatus(
+        'success'
+      );
+
+    } catch (
+      firebaseError
+    ) {
+
       console.error(
         'Registration failed:',
         firebaseError
@@ -108,12 +188,22 @@ export default function RegistrationForm({
         'Registration failed. Please try again.'
       );
 
-      setStatus('error');
+      setStatus(
+        'error'
+      );
     }
   }
 
-  if (status === 'success') {
+  {/* ====================================== */}
+  {/* SUCCESS */}
+  {/* ====================================== */}
+
+  if (
+    status === 'success'
+  ) {
+
     return (
+
       <motion.div
         initial={{
           opacity: 0,
@@ -125,53 +215,83 @@ export default function RegistrationForm({
         }}
         className="glass-card flex flex-col items-center gap-4 p-10 text-center"
       >
-        <FiCheckCircle
-          className="text-5xl text-neon-cyan"
-        />
+
+        <FiCheckCircle className="text-5xl text-neon-cyan" />
 
         <h2 className="text-2xl font-bold">
           Registration Successful!
         </h2>
 
         <p className="text-paper-100/70">
+
           You're registered for{' '}
-          <strong>{event.name}</strong>.
+
+          <strong>
+            {event.name}
+          </strong>
+
+          .
         </p>
 
+        {isNexIT && (
+
+          <p className="font-semibold text-neon-cyan">
+            NEX IT — FREE REGISTRATION
+          </p>
+
+        )}
+
         <p className="text-sm text-paper-100/60">
-          Thank you for registering for Techno Feast
-          2026!
+          Thank you for registering!
         </p>
 
         <button
           type="button"
           onClick={() => {
-            setStatus('idle');
+
+            setStatus(
+              'idle'
+            );
+
             setError('');
+
           }}
           className="btn-outline mt-3 text-xs"
         >
           Register Another Participant
         </button>
+
       </motion.div>
     );
   }
 
   return (
+
     <form
       onSubmit={handleSubmit}
       className="grid gap-5 sm:grid-cols-2"
     >
+
       {/* EVENT */}
 
       <div className="sm:col-span-2">
+
         <p className="mb-1 text-xs font-medium text-paper-100/60">
-          Event
+          {event.section}
         </p>
 
-        <h2 className="mb-5 text-xl font-semibold">
+        <h2 className="mb-3 text-xl font-semibold">
           {event.name}
         </h2>
+
+        {isNexIT && (
+
+          <div className="inline-flex rounded-full border border-neon-cyan/30 bg-neon-cyan/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-neon-cyan">
+            FREE REGISTRATION
+          </div>
+
+        )}
+
       </div>
 
       {/* FULL NAME */}
@@ -179,9 +299,14 @@ export default function RegistrationForm({
       <Field
         label="Full Name"
         required
-        value={form.fullName}
+        value={
+          form.fullName
+        }
         onChange={(value) =>
-          update('fullName', value)
+          update(
+            'fullName',
+            value
+          )
         }
       />
 
@@ -190,9 +315,14 @@ export default function RegistrationForm({
       <Field
         label="Register Number"
         required
-        value={form.registerNumber}
+        value={
+          form.registerNumber
+        }
         onChange={(value) =>
-          update('registerNumber', value)
+          update(
+            'registerNumber',
+            value
+          )
         }
       />
 
@@ -201,9 +331,14 @@ export default function RegistrationForm({
       <Field
         label="Department"
         required
-        value={form.department}
+        value={
+          form.department
+        }
         onChange={(value) =>
-          update('department', value)
+          update(
+            'department',
+            value
+          )
         }
       />
 
@@ -213,9 +348,14 @@ export default function RegistrationForm({
         label="Year"
         required
         placeholder="e.g. II Year"
-        value={form.year}
+        value={
+          form.year
+        }
         onChange={(value) =>
-          update('year', value)
+          update(
+            'year',
+            value
+          )
         }
       />
 
@@ -224,9 +364,14 @@ export default function RegistrationForm({
       <Field
         label="College Name"
         required
-        value={form.collegeName}
+        value={
+          form.collegeName
+        }
         onChange={(value) =>
-          update('collegeName', value)
+          update(
+            'collegeName',
+            value
+          )
         }
       />
 
@@ -236,9 +381,14 @@ export default function RegistrationForm({
         label="Mobile Number"
         required
         type="tel"
-        value={form.mobile}
+        value={
+          form.mobile
+        }
         onChange={(value) =>
-          update('mobile', value)
+          update(
+            'mobile',
+            value
+          )
         }
       />
 
@@ -248,62 +398,95 @@ export default function RegistrationForm({
         label="Email Address"
         required
         type="email"
-        value={form.email}
+        value={
+          form.email
+        }
         className="sm:col-span-2"
         onChange={(value) =>
-          update('email', value)
+          update(
+            'email',
+            value
+          )
         }
       />
 
       {/* TEAM */}
 
       {event.teamEvent && (
+
         <>
+
           <Field
             label="Team Name"
-            value={form.teamName}
+            value={
+              form.teamName
+            }
             onChange={(value) =>
-              update('teamName', value)
+              update(
+                'teamName',
+                value
+              )
             }
           />
 
           <Field
             label="Team Members"
-            value={form.teamMembers}
+            value={
+              form.teamMembers
+            }
             placeholder="Comma-separated names"
             onChange={(value) =>
-              update('teamMembers', value)
+              update(
+                'teamMembers',
+                value
+              )
             }
           />
+
         </>
+
       )}
 
       {/* ERROR */}
 
       {status === 'error' && (
+
         <div className="sm:col-span-2 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+
           <p className="text-sm text-red-400">
             {error}
           </p>
+
         </div>
+
       )}
 
       {/* SUBMIT */}
 
       <button
         type="submit"
-        disabled={status === 'submitting'}
+        disabled={
+          status === 'submitting'
+        }
         className="btn-glow sm:col-span-2 flex w-full items-center justify-center gap-2"
       >
-        {status === 'submitting' ? (
+
+        {status ===
+        'submitting' ? (
+
           <>
             <FiLoader className="animate-spin" />
             Submitting...
           </>
+
         ) : (
+
           'Submit Registration'
+
         )}
+
       </button>
+
     </form>
   );
 }
@@ -319,23 +502,31 @@ function Field({
 }: {
   label: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange: (
+    value: string
+  ) => void;
   required?: boolean;
   type?: string;
   placeholder?: string;
   className?: string;
 }) {
+
   return (
+
     <div className={className}>
+
       <label className="mb-1 block text-xs font-medium text-paper-100/70">
+
         {label}
 
         {required && (
+
           <span className="text-red-400">
-            {' '}
-            *
+            {' '}*
           </span>
+
         )}
+
       </label>
 
       <input
@@ -344,10 +535,13 @@ function Field({
         value={value}
         placeholder={placeholder}
         onChange={(e) =>
-          onChange(e.target.value)
+          onChange(
+            e.target.value
+          )
         }
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-paper-100 outline-none transition focus:border-neon-cyan/60 focus:shadow-glow-cyan"
       />
+
     </div>
   );
 }
