@@ -38,7 +38,7 @@ function SRCASBrand() {
         "
       >
         <img
-          src="/assets/srcas-logo.png"
+          src="/assets/clg.png"
           alt="SRCAS"
           className="block h-full w-full rounded-full object-contain"
           draggable={false}

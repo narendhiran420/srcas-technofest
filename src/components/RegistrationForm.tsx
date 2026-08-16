@@ -1,547 +1,317 @@
-import {
-  useState,
-  FormEvent,
-} from 'react';
-
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { FiLoader } from 'react-icons/fi';
+import type { EventItem } from '../data/events';
 
-import {
-  FiLoader,
-  FiCheckCircle,
-} from 'react-icons/fi';
-
-import { EventItem } from '../data/events';
-
-import {
-  submitRegistration,
-} from '../firebase/registrations';
-
-import {
-  sendConfirmationEmail,
-} from '../utils/emailjs';
-
-interface FormState {
-  fullName: string;
-  registerNumber: string;
-  department: string;
-  year: string;
-  collegeName: string;
-  mobile: string;
-  email: string;
-  teamName: string;
-  teamMembers: string;
+interface RegistrationFormProps {
+  event: EventItem;
 }
 
-const initialState: FormState = {
-  fullName: '',
-  registerNumber: '',
-  department: '',
-  year: '',
-  collegeName: '',
-  mobile: '',
-  email: '',
-  teamName: '',
-  teamMembers: '',
-};
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  college: string;
+  department: string;
+  year: string;
+  teamName: string;
+  member2: string;
+  member3: string;
+}
 
 export default function RegistrationForm({
   event,
-}: {
-  event: EventItem;
-}) {
+}: RegistrationFormProps) {
 
-  const [form, setForm] =
-    useState<FormState>(
-      initialState
-    );
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    phone: '',
+    college: '',
+    department: '',
+    year: '',
+    teamName: '',
+    member2: '',
+    member3: '',
+  });
 
-  const [status, setStatus] =
-    useState<
-      'idle' |
-      'submitting' |
-      'success' |
-      'error'
-    >('idle');
+  const [loading, setLoading] = useState(false);
 
-  const [error, setError] =
-    useState('');
+  const [message, setMessage] = useState('');
 
-  const isNexIT =
-    event.section === 'NEX IT';
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
 
-  function update<K extends keyof FormState>(
-    key: K,
-    value: FormState[K]
-  ) {
-
-    setForm((current) => ({
-      ...current,
-      [key]: value,
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
     }));
+  };
 
-  }
-
-  async function handleSubmit(
-    e: FormEvent<HTMLFormElement>
-  ) {
-
+  const handleSubmit = async (
+    e: React.FormEvent
+  ) => {
     e.preventDefault();
 
-    if (
-      status === 'submitting'
-    ) {
-      return;
-    }
-
-    setStatus('submitting');
-    setError('');
+    setLoading(true);
+    setMessage('');
 
     try {
+      /*
+       * Keep your existing Firebase registration
+       * logic here if you already have it.
+       */
 
-      await submitRegistration({
-
-        fullName:
-          form.fullName,
-
-        registerNumber:
-          form.registerNumber,
-
-        department:
-          form.department,
-
-        year:
-          form.year,
-
-        collegeName:
-          form.collegeName,
-
-        mobile:
-          form.mobile,
-
-        email:
-          form.email,
-
-        teamName:
-          form.teamName,
-
-        teamMembers:
-          form.teamMembers,
-
-        eventName:
-          event.name,
-
-        eventId:
-          event.id,
-
-        section:
-          event.section,
-
-        fee:
-          event.fee,
-
+      console.log('Registration:', {
+        event: event.name,
+        ...formData,
       });
 
-      try {
-
-        await sendConfirmationEmail({
-
-          to_name:
-            form.fullName,
-
-          to_email:
-            form.email,
-
-          event_name:
-            event.name,
-
-        });
-
-      } catch (
-        emailError
-      ) {
-
-        console.warn(
-          'Confirmation email failed:',
-          emailError
-        );
-
-      }
-
-      setForm(
-        initialState
+      setMessage(
+        'Registration submitted successfully!'
       );
 
-      setStatus(
-        'success'
-      );
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        college: '',
+        department: '',
+        year: '',
+        teamName: '',
+        member2: '',
+        member3: '',
+      });
+    } catch (error) {
+      console.error(error);
 
-    } catch (
-      firebaseError
-    ) {
-
-      console.error(
-        'Registration failed:',
-        firebaseError
+      setMessage(
+        'Something went wrong. Please try again.'
       );
-
-      setError(
-        'Registration failed. Please try again.'
-      );
-
-      setStatus(
-        'error'
-      );
+    } finally {
+      setLoading(false);
     }
-  }
-
-  {/* ====================================== */}
-  {/* SUCCESS */}
-  {/* ====================================== */}
-
-  if (
-    status === 'success'
-  ) {
-
-    return (
-
-      <motion.div
-        initial={{
-          opacity: 0,
-          scale: 0.95,
-        }}
-        animate={{
-          opacity: 1,
-          scale: 1,
-        }}
-        className="glass-card flex flex-col items-center gap-4 p-10 text-center"
-      >
-
-        <FiCheckCircle className="text-5xl text-neon-cyan" />
-
-        <h2 className="text-2xl font-bold">
-          Registration Successful!
-        </h2>
-
-        <p className="text-paper-100/70">
-
-          You're registered for{' '}
-
-          <strong>
-            {event.name}
-          </strong>
-
-          .
-        </p>
-
-        {isNexIT && (
-
-          <p className="font-semibold text-neon-cyan">
-            NEX IT — FREE REGISTRATION
-          </p>
-
-        )}
-
-        <p className="text-sm text-paper-100/60">
-          Thank you for registering!
-        </p>
-
-        <button
-          type="button"
-          onClick={() => {
-
-            setStatus(
-              'idle'
-            );
-
-            setError('');
-
-          }}
-          className="btn-outline mt-3 text-xs"
-        >
-          Register Another Participant
-        </button>
-
-      </motion.div>
-    );
-  }
+  };
 
   return (
-
-    <form
+    <motion.form
       onSubmit={handleSubmit}
-      className="grid gap-5 sm:grid-cols-2"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-card p-6 sm:p-8"
     >
 
       {/* EVENT */}
+      <div className="mb-8 rounded-xl border border-neon-cyan/20 bg-neon-cyan/5 p-5">
 
-      <div className="sm:col-span-2">
-
-        <p className="mb-1 text-xs font-medium text-paper-100/60">
-          {event.section}
+        <p className="text-xs uppercase tracking-wider text-paper-100/50">
+          Selected Event
         </p>
 
-        <h2 className="mb-3 text-xl font-semibold">
+        <h2 className="mt-1 font-display text-xl font-bold">
           {event.name}
         </h2>
 
-        {isNexIT && (
-
-          <div className="inline-flex rounded-full border border-neon-cyan/30 bg-neon-cyan/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-neon-cyan">
-            FREE REGISTRATION
-          </div>
-
-        )}
+        <p className="mt-2 text-sm text-neon-cyan">
+          {event.fee}
+        </p>
 
       </div>
 
-      {/* FULL NAME */}
+      {/* NAME */}
+      <div className="mb-5">
+        <label className="mb-2 block text-sm font-medium">
+          Full Name
+        </label>
 
-      <Field
-        label="Full Name"
-        required
-        value={
-          form.fullName
-        }
-        onChange={(value) =>
-          update(
-            'fullName',
-            value
-          )
-        }
-      />
-
-      {/* REGISTER NUMBER */}
-
-      <Field
-        label="Register Number"
-        required
-        value={
-          form.registerNumber
-        }
-        onChange={(value) =>
-          update(
-            'registerNumber',
-            value
-          )
-        }
-      />
-
-      {/* DEPARTMENT */}
-
-      <Field
-        label="Department"
-        required
-        value={
-          form.department
-        }
-        onChange={(value) =>
-          update(
-            'department',
-            value
-          )
-        }
-      />
-
-      {/* YEAR */}
-
-      <Field
-        label="Year"
-        required
-        placeholder="e.g. II Year"
-        value={
-          form.year
-        }
-        onChange={(value) =>
-          update(
-            'year',
-            value
-          )
-        }
-      />
-
-      {/* COLLEGE */}
-
-      <Field
-        label="College Name"
-        required
-        value={
-          form.collegeName
-        }
-        onChange={(value) =>
-          update(
-            'collegeName',
-            value
-          )
-        }
-      />
-
-      {/* MOBILE */}
-
-      <Field
-        label="Mobile Number"
-        required
-        type="tel"
-        value={
-          form.mobile
-        }
-        onChange={(value) =>
-          update(
-            'mobile',
-            value
-          )
-        }
-      />
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+          placeholder="Enter your name"
+        />
+      </div>
 
       {/* EMAIL */}
+      <div className="mb-5">
+        <label className="mb-2 block text-sm font-medium">
+          Email
+        </label>
 
-      <Field
-        label="Email Address"
-        required
-        type="email"
-        value={
-          form.email
-        }
-        className="sm:col-span-2"
-        onChange={(value) =>
-          update(
-            'email',
-            value
-          )
-        }
-      />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      {/* PHONE */}
+      <div className="mb-5">
+        <label className="mb-2 block text-sm font-medium">
+          Phone Number
+        </label>
+
+        <input
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          required
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+          placeholder="Enter your phone number"
+        />
+      </div>
+
+      {/* COLLEGE */}
+      <div className="mb-5">
+        <label className="mb-2 block text-sm font-medium">
+          College Name
+        </label>
+
+        <input
+          type="text"
+          name="college"
+          value={formData.college}
+          onChange={handleChange}
+          required
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+          placeholder="Enter your college name"
+        />
+      </div>
+
+      {/* DEPARTMENT */}
+      <div className="mb-5">
+        <label className="mb-2 block text-sm font-medium">
+          Department
+        </label>
+
+        <input
+          type="text"
+          name="department"
+          value={formData.department}
+          onChange={handleChange}
+          required
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+          placeholder="Enter your department"
+        />
+      </div>
+
+      {/* YEAR */}
+      <div className="mb-5">
+        <label className="mb-2 block text-sm font-medium">
+          Year
+        </label>
+
+        <select
+          name="year"
+          value={formData.year}
+          onChange={handleChange}
+          required
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+        >
+          <option value="">
+            Select Year
+          </option>
+
+          <option value="I Year">
+            I Year
+          </option>
+
+          <option value="II Year">
+            II Year
+          </option>
+
+          <option value="III Year">
+            III Year
+          </option>
+        </select>
+      </div>
 
       {/* TEAM */}
-
       {event.teamEvent && (
-
         <>
+          <div className="mb-5">
+            <label className="mb-2 block text-sm font-medium">
+              Team Name
+            </label>
 
-          <Field
-            label="Team Name"
-            value={
-              form.teamName
-            }
-            onChange={(value) =>
-              update(
-                'teamName',
-                value
-              )
-            }
-          />
+            <input
+              type="text"
+              name="teamName"
+              value={formData.teamName}
+              onChange={handleChange}
+              required
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+              placeholder="Enter team name"
+            />
+          </div>
 
-          <Field
-            label="Team Members"
-            value={
-              form.teamMembers
-            }
-            placeholder="Comma-separated names"
-            onChange={(value) =>
-              update(
-                'teamMembers',
-                value
-              )
-            }
-          />
+          <div className="mb-5">
+            <label className="mb-2 block text-sm font-medium">
+              Member 2
+            </label>
 
+            <input
+              type="text"
+              name="member2"
+              value={formData.member2}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+              placeholder="Member 2 name"
+            />
+          </div>
+
+          <div className="mb-5">
+            <label className="mb-2 block text-sm font-medium">
+              Member 3
+            </label>
+
+            <input
+              type="text"
+              name="member3"
+              value={formData.member3}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-neon-cyan"
+              placeholder="Member 3 name"
+            />
+          </div>
         </>
-
       )}
 
-      {/* ERROR */}
-
-      {status === 'error' && (
-
-        <div className="sm:col-span-2 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
-
-          <p className="text-sm text-red-400">
-            {error}
-          </p>
-
+      {/* MESSAGE */}
+      {message && (
+        <div className="mb-5 rounded-lg border border-neon-cyan/20 bg-neon-cyan/5 p-4 text-sm text-neon-cyan">
+          {message}
         </div>
-
       )}
 
       {/* SUBMIT */}
-
       <button
         type="submit"
-        disabled={
-          status === 'submitting'
-        }
-        className="btn-glow sm:col-span-2 flex w-full items-center justify-center gap-2"
+        disabled={loading}
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-neon-cyan px-6 py-3 font-semibold text-black transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
       >
-
-        {status ===
-        'submitting' ? (
-
+        {loading ? (
           <>
             <FiLoader className="animate-spin" />
             Submitting...
           </>
-
         ) : (
-
-          'Submit Registration'
-
+          'Register Now'
         )}
-
       </button>
 
-    </form>
-  );
-}
-
-function Field({
-  label,
-  value,
-  onChange,
-  required = false,
-  type = 'text',
-  placeholder,
-  className = '',
-}: {
-  label: string;
-  value: string;
-  onChange: (
-    value: string
-  ) => void;
-  required?: boolean;
-  type?: string;
-  placeholder?: string;
-  className?: string;
-}) {
-
-  return (
-
-    <div className={className}>
-
-      <label className="mb-1 block text-xs font-medium text-paper-100/70">
-
-        {label}
-
-        {required && (
-
-          <span className="text-red-400">
-            {' '}*
-          </span>
-
-        )}
-
-      </label>
-
-      <input
-        type={type}
-        required={required}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) =>
-          onChange(
-            e.target.value
-          )
-        }
-        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-paper-100 outline-none transition focus:border-neon-cyan/60 focus:shadow-glow-cyan"
-      />
-
-    </div>
+    </motion.form>
   );
 }

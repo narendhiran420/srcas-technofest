@@ -4,7 +4,9 @@ import RegistrationForm from '../components/RegistrationForm';
 import { getEventById } from '../data/events';
 
 export default function RegistrationEvent() {
-  const { eventId } = useParams();
+  const { eventId } = useParams<{
+    eventId: string;
+  }>();
 
   const event = eventId
     ? getEventById(eventId)
@@ -14,51 +16,40 @@ export default function RegistrationEvent() {
     return <Navigate to="/registration" replace />;
   }
 
-  const isNexIT = event.section === 'NEX IT';
-
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16">
+    <div className="mx-auto max-w-5xl px-6 py-16">
 
-      {/* Event Header */}
       <Reveal className="text-center">
 
-        {/* Section */}
         <span className="section-eyebrow">
-          {isNexIT
-            ? 'NEX IT'
-            : 'TECHNO FEAST'}
+          TECHNO FEAST 2026
         </span>
 
-        {/* Event Name */}
-        <h1 className="mt-2 font-display text-2xl font-bold sm:text-3xl">
+        <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">
           {event.name}
         </h1>
 
-        {/* Date / Time / Venue */}
-        <p className="mt-2 text-sm text-paper-100/60">
-          {event.date} · {event.time}
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-paper-100/65">
+          {event.shortDescription}
         </p>
 
-        <p className="mt-1 text-xs text-paper-100/50">
-          {event.venue}
-        </p>
+        <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm">
 
-        {/* NEX IT FREE REGISTRATION */}
-        {isNexIT && (
-          <div className="mt-5 inline-flex rounded-full border border-neon-cyan/30 bg-neon-cyan/10 px-5 py-2 text-xs font-bold uppercase tracking-widest text-neon-cyan">
-            FREE REGISTRATION
-          </div>
-        )}
+          <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
+            {event.category}
+          </span>
+
+          <span className="rounded-full border border-neon-cyan/20 bg-neon-cyan/10 px-4 py-2 text-neon-cyan">
+            {event.fee}
+          </span>
+
+        </div>
 
       </Reveal>
 
-      {/* Registration Form */}
-      <Reveal
-        delay={0.15}
-        className="mt-8"
-      >
+      <div className="mt-10">
         <RegistrationForm event={event} />
-      </Reveal>
+      </div>
 
     </div>
   );

@@ -1,39 +1,23 @@
-export type EventSection =
-  | 'TECHNO FEAST'
-  | 'NEX IT';
+export type EventSection = 'TECHNO FEAST';
 
 export interface EventItem {
   id: string;
   name: string;
-
-  category:
-    | 'Technical'
-    | 'Non-Technical';
-
+  category: 'Technical' | 'Non-Technical';
   section: EventSection;
-
   image: string;
-
   shortDescription: string;
-
   date: string;
-
   time: string;
-
   venue: string;
-
   fee: string;
-
   prize: string;
-
   rules: string[];
-
   coordinators: {
     faculty: string;
     student: string;
     phone: string;
   }[];
-
   teamEvent: boolean;
 }
 
@@ -41,11 +25,9 @@ export const FEAST_VENUE =
   'Nava India, Avinashi Road, Peelamedu, Coimbatore - 641006, Tamil Nadu, India';
 
 export const events: EventItem[] = [
-
   // ==================================================
-  // TECHNO FEAST
+  // TECHNO FEAST - POSTER DESIGN
   // ==================================================
-
   {
     id: 'poster-design',
     name: 'Poster Design',
@@ -85,6 +67,9 @@ export const events: EventItem[] = [
     teamEvent: false,
   },
 
+  // ==================================================
+  // TECHNO FEAST - PAPER PRESENTATION
+  // ==================================================
   {
     id: 'paper-presentation',
     name: 'Paper Presentation',
@@ -124,6 +109,9 @@ export const events: EventItem[] = [
     teamEvent: true,
   },
 
+  // ==================================================
+  // TECHNO FEAST - AI PROMPT ENGINEERING
+  // ==================================================
   {
     id: 'ai-prompt',
     name: 'AI Prompt Engineering',
@@ -163,6 +151,9 @@ export const events: EventItem[] = [
     teamEvent: false,
   },
 
+  // ==================================================
+  // TECHNO FEAST - DEBUGGING
+  // ==================================================
   {
     id: 'debugging',
     name: 'Debugging',
@@ -202,6 +193,9 @@ export const events: EventItem[] = [
     teamEvent: false,
   },
 
+  // ==================================================
+  // TECHNO FEAST - CONNECTIONS
+  // ==================================================
   {
     id: 'connection',
     name: 'Connections',
@@ -240,383 +234,17 @@ export const events: EventItem[] = [
 
     teamEvent: true,
   },
-
-  {
-    id: 'cooking-without-fire',
-    name: 'Cooking Without Fire',
-    category: 'Non-Technical',
-    section: 'TECHNO FEAST',
-
-    image: '/assets/cooking_without_fire.png',
-
-    shortDescription:
-      'Prepare a creative dish without using any flame.',
-
-    date: '18 Sep 2026',
-
-    time: '11:00 AM – 12:30 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: '₹150 per team',
-
-    prize: 'Certificates',
-
-    rules: [
-      'Teams of up to 2 members.',
-      'No open flame or induction cooking allowed.',
-      'Ingredients and equipment must be arranged by participants.',
-      'Judged on taste, presentation, hygiene, and creativity.',
-    ],
-
-    coordinators: [
-      {
-        faculty: 'Faculty Coordinator',
-        student: 'Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: true,
-  },
-
-  // ==================================================
-  // NEX IT
-  // INTER-DEPARTMENT FUNCTION
-  // FREE REGISTRATION
-  // ==================================================
-
-  {
-    id: 'nex-it-poster-design',
-    name: 'Poster Design',
-    category: 'Non-Technical',
-    section: 'NEX IT',
-
-    image: '/assets/poster_design.png',
-
-    shortDescription:
-      'Show your creativity and design skills through an exciting poster design challenge.',
-
-    date: '18 Sep 2026',
-
-    time: '10:00 AM – 11:30 AM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Individual participation.',
-      'Topic will be provided by the organizers.',
-      'Complete the poster within the given time.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: false,
-  },
-
-  {
-    id: 'nex-it-paper-presentation',
-    name: 'Paper Presentation',
-    category: 'Technical',
-    section: 'NEX IT',
-
-    image: '/assets/paper_presentation.png',
-
-    shortDescription:
-      'Present innovative ideas, research concepts and emerging technology topics.',
-
-    date: '18 Sep 2026',
-
-    time: '10:00 AM – 1:00 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Individual or team participation.',
-      'Presentation must be based on a relevant topic.',
-      'Participants must follow the allotted time.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: true,
-  },
-
-  {
-    id: 'nex-it-debugging',
-    name: 'Debugging',
-    category: 'Technical',
-    section: 'NEX IT',
-
-    image: '/assets/debugging.png',
-
-    shortDescription:
-      'Find and fix programming errors within the given time.',
-
-    date: '18 Sep 2026',
-
-    time: '1:30 PM – 3:00 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Individual participation.',
-      'Programming errors will be provided.',
-      'Participants must identify and correct the errors.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: false,
-  },
-
-  {
-    id: 'nex-it-ai-prompting',
-    name: 'AI Prompting',
-    category: 'Technical',
-    section: 'NEX IT',
-
-    image: '/assets/ai_prompt_challenge.png',
-
-    shortDescription:
-      'Explore creative and effective ways to communicate with AI systems.',
-
-    date: '18 Sep 2026',
-
-    time: '11:30 AM – 1:00 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Individual participation.',
-      'Prompts will be evaluated based on creativity and effectiveness.',
-      'Participants must follow event instructions.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: false,
-  },
-
-  {
-    id: 'nex-it-connections',
-    name: 'Connections',
-    category: 'Non-Technical',
-    section: 'NEX IT',
-
-    image: '/assets/connections.png',
-
-    shortDescription:
-      'Test your observation, thinking and connection skills.',
-
-    date: '18 Sep 2026',
-
-    time: '1:30 PM – 3:00 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Team participation.',
-      'Questions and clues will be provided.',
-      'Participants must identify the correct connection.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: true,
-  },
-
-  {
-    id: 'nex-it-cooking-without-fire',
-    name: 'Cooking Without Fire',
-    category: 'Non-Technical',
-    section: 'NEX IT',
-
-    image: '/assets/cooking_without_fire.png',
-
-    shortDescription:
-      'Prepare creative dishes without using fire.',
-
-    date: '18 Sep 2026',
-
-    time: '11:00 AM – 12:30 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Team participation.',
-      'No fire or heating equipment.',
-      'Participants should bring required ingredients.',
-      'Maintain cleanliness and hygiene.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: true,
-  },
-
-  {
-    id: 'nex-it-wealth-out-of-waste',
-    name: 'Wealth Out of Waste',
-    category: 'Non-Technical',
-    section: 'NEX IT',
-
-    image: '/assets/wealth_out_of_waste.png',
-
-    shortDescription:
-      'Turn waste materials into useful and creative products.',
-
-    date: '18 Sep 2026',
-
-    time: '10:00 AM – 12:00 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Individual or team participation.',
-      'Use recyclable or waste materials.',
-      'Participants should bring their own materials.',
-      'The final product will be evaluated for creativity and usefulness.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: true,
-  },
-
-  {
-    id: 'nex-it-fake-virus-detection',
-    name: 'Fake Virus Detection',
-    category: 'Technical',
-    section: 'NEX IT',
-
-    image: '/assets/fake_virus_detection.png',
-
-    shortDescription:
-      'Test your cyber awareness by identifying fake virus alerts and suspicious scenarios.',
-
-    date: '18 Sep 2026',
-
-    time: '2:00 PM – 3:00 PM',
-
-    venue: FEAST_VENUE,
-
-    fee: 'FREE',
-
-    prize: 'Certificates + Prizes',
-
-    rules: [
-      'Individual participation.',
-      'Only simulated examples will be used.',
-      'No real malware or harmful software will be used.',
-      'Participants must identify suspicious indicators.',
-      "Judges' decision is final.",
-    ],
-
-    coordinators: [
-      {
-        faculty: 'NEX IT Faculty Coordinator',
-        student: 'NEX IT Student Coordinator',
-        phone: '+91 95001 12040',
-      },
-    ],
-
-    teamEvent: false,
-  },
 ];
 
 // ==================================================
-// HELPERS
+// TECHNO FEAST EVENTS
 // ==================================================
 
-export const technoFeastEvents =
-  events.filter(
-    (event) =>
-      event.section === 'TECHNO FEAST'
-  );
+export const technoFeastEvents: EventItem[] = events;
 
-export const NexITEvents =
-  events.filter(
-    (event) =>
-      event.section === 'NEX IT'
-  );
+// ==================================================
+// GET EVENT BY ID
+// ==================================================
 
 export function getEventById(
   id: string
