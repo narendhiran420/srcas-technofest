@@ -1,27 +1,31 @@
-import { useEffect, useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Loader from './components/Loader';
-import ScrollProgress from './components/ScrollProgress';
-import CustomCursor from './components/CustomCursor';
-import BackToTop from './components/BackToTop';
-import FloatingActionMenu from './components/FloatingActionMenu';
-import AIChatAssistant from './components/AIChatAssistant';
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Loader from "./components/Loader";
+import ScrollProgress from "./components/ScrollProgress";
+import CustomCursor from "./components/CustomCursor";
+import BackToTop from "./components/BackToTop";
+import FloatingActionMenu from "./components/FloatingActionMenu";
+import AIChatAssistant from "./components/AIChatAssistant";
 
-import Home from './pages/Home';
-import About from './pages/About';
-import TechnoFeast from './pages/TechnoFeast';
-import Events from './pages/Events';
-import NexIT from './pages/NexIT';
-import EventDetail from './pages/EventDetail';
-import Registration from './pages/Registration';
-import RegistrationEvent from './pages/RegistrationEvent';
-import StudentCorner from './pages/StudentCorner';
-import Contact from './pages/Contact';
-import NotFound from './pages/NotFound';
+import Home from "./pages/Home";
+import About from "./pages/About";
+import TechnoFeast from "./pages/TechnoFeast";
+import Events from "./pages/Events";
+import NexIT from "./pages/NexIT";
+import EventDetail from "./pages/EventDetail";
+import Registration from "./pages/Registration";
+import RegistrationEvent from "./pages/RegistrationEvent";
+import StudentCorner from "./pages/StudentCorner";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
+
+/* =========================================================
+   PAGE TRANSITION
+========================================================= */
 
 function PageTransition({
   children,
@@ -32,7 +36,7 @@ function PageTransition({
     <motion.main
       initial={{
         opacity: 0,
-        y: 16,
+        y: 12,
       }}
       animate={{
         opacity: 1,
@@ -40,57 +44,84 @@ function PageTransition({
       }}
       exit={{
         opacity: 0,
-        y: -16,
+        y: -12,
       }}
       transition={{
-        duration: 0.45,
+        duration: 0.4,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="min-h-screen pt-24"
+      className="min-h-screen pt-[68px] sm:pt-24"
     >
       {children}
     </motion.main>
   );
 }
 
+/* =========================================================
+   APP
+========================================================= */
+
 export default function App() {
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
   const location = useLocation();
 
+  /* =======================================================
+     LOADER
+  ======================================================= */
+
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setLoading(false);
     }, 2200);
 
-    return () => clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, []);
+
+  /* =======================================================
+     SCROLL TO TOP WHEN ROUTE CHANGES
+  ======================================================= */
 
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: 'instant' as ScrollBehavior,
+      left: 0,
+      behavior: "instant",
     });
   }, [location.pathname]);
 
   return (
     <>
-      {/* LOADER */}
+      {/* ===================================================
+          LOADER
+      =================================================== */}
+
       <Loader show={loading} />
 
-      {/* GLOBAL COMPONENTS */}
+      {/* ===================================================
+          GLOBAL UI
+      =================================================== */}
+
       <ScrollProgress />
+
       <CustomCursor />
+
       <Navbar />
 
-      {/* ROUTES */}
+      {/* ===================================================
+          ROUTES
+      =================================================== */}
+
       <AnimatePresence mode="wait">
         <Routes
           location={location}
           key={location.pathname}
         >
+
           {/* HOME */}
+
           <Route
             path="/"
             element={
@@ -101,6 +132,7 @@ export default function App() {
           />
 
           {/* ABOUT */}
+
           <Route
             path="/about"
             element={
@@ -111,6 +143,7 @@ export default function App() {
           />
 
           {/* TECHNO FEAST */}
+
           <Route
             path="/technofeast"
             element={
@@ -120,7 +153,8 @@ export default function App() {
             }
           />
 
-          {/* ALL EVENTS */}
+          {/* EVENTS */}
+
           <Route
             path="/events"
             element={
@@ -131,6 +165,7 @@ export default function App() {
           />
 
           {/* NEX IT */}
+
           <Route
             path="/nex-it"
             element={
@@ -140,7 +175,8 @@ export default function App() {
             }
           />
 
-          {/* EVENT DETAILS */}
+          {/* EVENT DETAIL */}
+
           <Route
             path="/events/:eventId"
             element={
@@ -150,7 +186,8 @@ export default function App() {
             }
           />
 
-          {/* GENERAL REGISTRATION */}
+          {/* REGISTRATION */}
+
           <Route
             path="/registration"
             element={
@@ -161,6 +198,7 @@ export default function App() {
           />
 
           {/* EVENT REGISTRATION */}
+
           <Route
             path="/registration/:eventId"
             element={
@@ -171,6 +209,7 @@ export default function App() {
           />
 
           {/* STUDENT CORNER */}
+
           <Route
             path="/student-corner"
             element={
@@ -181,6 +220,7 @@ export default function App() {
           />
 
           {/* CONTACT */}
+
           <Route
             path="/contact"
             element={
@@ -191,6 +231,7 @@ export default function App() {
           />
 
           {/* 404 */}
+
           <Route
             path="*"
             element={
@@ -199,13 +240,24 @@ export default function App() {
               </PageTransition>
             }
           />
+
         </Routes>
       </AnimatePresence>
 
-      {/* FOOTER / FLOATING COMPONENTS */}
+      {/* ===================================================
+          FOOTER
+      =================================================== */}
+
       <Footer />
+
+      {/* ===================================================
+          FLOATING COMPONENTS
+      =================================================== */}
+
       <BackToTop />
+
       <FloatingActionMenu />
+
       <AIChatAssistant />
     </>
   );
