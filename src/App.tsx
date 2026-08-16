@@ -67,7 +67,11 @@ export default function App() {
   const location = useLocation();
 
   /* =======================================================
-     LOADER
+     INITIAL WEBSITE LOADER
+     
+     IMPORTANT:
+     [] means loader runs ONLY when website is opened/refreshed.
+     It will NOT run when changing routes.
   ======================================================= */
 
   useEffect(() => {
@@ -92,10 +96,16 @@ export default function App() {
     });
   }, [location.pathname]);
 
+  /* =======================================================
+     RENDER
+  ======================================================= */
+
   return (
     <>
       {/* ===================================================
-          LOADER
+          INITIAL LOADER
+          
+          Appears only when website is opened/refreshed.
       =================================================== */}
 
       <Loader show={loading} />
@@ -111,16 +121,21 @@ export default function App() {
       <Navbar />
 
       {/* ===================================================
-          ROUTES
+          ROUTES + PAGE TRANSITIONS
       =================================================== */}
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence
+        mode="wait"
+        initial={false}
+      >
         <Routes
           location={location}
           key={location.pathname}
         >
 
-          {/* HOME */}
+          {/* =================================================
+              HOME
+          ================================================= */}
 
           <Route
             path="/"
@@ -131,7 +146,9 @@ export default function App() {
             }
           />
 
-          {/* ABOUT */}
+          {/* =================================================
+              ABOUT
+          ================================================= */}
 
           <Route
             path="/about"
@@ -142,7 +159,9 @@ export default function App() {
             }
           />
 
-          {/* TECHNO FEAST */}
+          {/* =================================================
+              TECHNO FEAST
+          ================================================= */}
 
           <Route
             path="/technofeast"
@@ -153,7 +172,9 @@ export default function App() {
             }
           />
 
-          {/* EVENTS */}
+          {/* =================================================
+              EVENTS
+          ================================================= */}
 
           <Route
             path="/events"
@@ -164,7 +185,9 @@ export default function App() {
             }
           />
 
-          {/* NEX IT */}
+          {/* =================================================
+              NEX IT
+          ================================================= */}
 
           <Route
             path="/nex-it"
@@ -175,7 +198,9 @@ export default function App() {
             }
           />
 
-          {/* EVENT DETAIL */}
+          {/* =================================================
+              EVENT DETAIL
+          ================================================= */}
 
           <Route
             path="/events/:eventId"
@@ -186,7 +211,9 @@ export default function App() {
             }
           />
 
-          {/* REGISTRATION */}
+          {/* =================================================
+              REGISTRATION
+          ================================================= */}
 
           <Route
             path="/registration"
@@ -197,7 +224,9 @@ export default function App() {
             }
           />
 
-          {/* EVENT REGISTRATION */}
+          {/* =================================================
+              EVENT REGISTRATION
+          ================================================= */}
 
           <Route
             path="/registration/:eventId"
@@ -208,7 +237,9 @@ export default function App() {
             }
           />
 
-          {/* STUDENT CORNER */}
+          {/* =================================================
+              STUDENT CORNER
+          ================================================= */}
 
           <Route
             path="/student-corner"
@@ -219,7 +250,9 @@ export default function App() {
             }
           />
 
-          {/* CONTACT */}
+          {/* =================================================
+              CONTACT
+          ================================================= */}
 
           <Route
             path="/contact"
@@ -230,7 +263,9 @@ export default function App() {
             }
           />
 
-          {/* 404 */}
+          {/* =================================================
+              404
+          ================================================= */}
 
           <Route
             path="*"

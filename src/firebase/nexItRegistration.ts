@@ -7,26 +7,70 @@ import {
 import { db } from "./config";
 
 /* =====================================================
-   NEX IT REGISTRATION DATA
+   TYPES
 ===================================================== */
 
-export interface NexItRegistrationData {
+export type NexItYear =
+  | "1st Year"
+  | "2nd Year"
+  | "3rd Year";
+
+export type NexItProgram =
+  | "UG"
+  | "PG";
+
+/* =====================================================
+   PARTICIPANT
+===================================================== */
+
+export interface NexItParticipant {
   name: string;
   registerNumber: string;
   email: string;
   phone: string;
-
-  department?: string;
-
-  // New fields
-  program: "UG" | "PG";
-  year: "1st Year" | "2nd Year" | "3rd Year";
-
-  event: string;
+  department: string;
+  year: NexItYear | "";
 }
 
 /* =====================================================
-   REGISTER NEX IT PARTICIPANT
+   REGISTRATION
+===================================================== */
+
+export interface NexItRegistrationData {
+  event: string;
+
+  /* Common email */
+  email: string;
+
+  program: NexItProgram;
+
+  participant1: NexItParticipant;
+
+  participant2?: NexItParticipant;
+}
+
+/* =====================================================
+   TEAM EVENTS
+===================================================== */
+
+export const NEX_IT_TEAM_EVENTS = [
+  "Paper Presentation",
+  "Connections",
+  "Cooking Without Fire",
+  "Wealth Out of Waste",
+] as const;
+
+/* =====================================================
+   INDIVIDUAL EVENTS
+===================================================== */
+
+export const NEX_IT_INDIVIDUAL_EVENTS = [
+  "Poster Design",
+  "AI Prompting",
+] as const;
+
+/* =====================================================
+   REGISTER NEX IT
 ===================================================== */
 
 export async function registerForNexIt(
@@ -34,35 +78,94 @@ export async function registerForNexIt(
 ) {
   try {
     /* =================================================
-       VALIDATION
+       BASIC VALIDATION
     ================================================= */
 
-    if (!data.name.trim()) {
-      throw new Error("Name is required");
+    if (!data.event?.trim()) {
+      throw new Error(
+        "Please select an event."
+      );
     }
 
-    if (!data.registerNumber.trim()) {
-      throw new Error("Register number is required");
-    }
-
-    if (!data.email.trim()) {
-      throw new Error("Email is required");
-    }
-
-    if (!data.phone.trim()) {
-      throw new Error("Phone number is required");
+    if (!data.email?.trim()) {
+      throw new Error(
+        "Please enter your email."
+      );
     }
 
     if (!data.program) {
-      throw new Error("UG or PG is required");
+      throw new Error(
+        "Please select UG or PG."
+      );
     }
 
-    if (!data.year) {
-      throw new Error("Year is required");
+    if (!data.participant1) {
+      throw new Error(
+        "Participant 1 details are required."
+      );
     }
 
-    if (!data.event.trim()) {
-      throw new Error("Event is required");
+    /* =================================================
+       EVENT
+    ================================================= */
+
+    const eventName =
+      data.event.trim();
+
+    const isTeamEvent =
+      NEX_IT_TEAM_EVENTS.includes(
+        eventName as
+          (typeof NEX_IT_TEAM_EVENTS)[number]
+      );
+
+    const isIndividualEvent =
+      NEX_IT_INDIVIDUAL_EVENTS.includes(
+        eventName as
+          (typeof NEX_IT_INDIVIDUAL_EVENTS)[number]
+      );
+
+    if (
+      !isTeamEvent &&
+      !isIndividualEvent
+    ) {
+      throw new Error(
+        "Invalid NEX IT event selected."
+      );
+    }
+
+    /* =================================================
+       COMMON EMAIL
+    ================================================= */
+
+    const commonEmail =
+      data.email
+        .trim()
+        .toLowerCase();
+
+    /* =================================================
+       PARTICIPANT 1
+    ================================================= */
+
+    validateParticipant(
+      data.participant1,
+      "Member 1"
+    );
+
+    /* =================================================
+       PARTICIPANT 2
+    ================================================= */
+
+    if (isTeamEvent) {
+      if (!data.participant2) {
+        throw new Error(
+          "Member 2 details are required for this team event."
+        );
+      }
+
+      validateParticipant(
+        data.participant2,
+        "Member 2"
+      );
     }
 
     /* =================================================
@@ -70,63 +173,189 @@ export async function registerForNexIt(
     ================================================= */
 
     const registrationData = {
-      name: data.name.trim(),
+      /* =================================================
+         BASIC
+      ================================================= */
 
-      registerNumber: data.registerNumber.trim(),
+      registrationType:
+        "NEX IT",
 
-      email: data.email.trim().toLowerCase(),
+      registrationFee:
+        "FREE",
 
-      phone: data.phone.trim(),
+      event:
+        eventName,
 
-      department:
-        data.department?.trim() ||
-        "B.Sc. Information Technology",
+      teamEvent:
+        isTeamEvent,
 
-      /* New Program Field */
+      teamSize:
+        isTeamEvent ? 2 : 1,
 
-      program: data.program,
+      /* =================================================
+         COMMON EMAIL
+      ================================================= */
 
-      /* Year Field */
+      email:
+        commonEmail,
 
-      year: data.year,
+      /* =================================================
+         PROGRAM
+      ================================================= */
 
-      /* Combined value for easy viewing */
+      program:
+        data.program,
 
-      studyLevel: `${data.program} ${data.year}`,
+      /* =================================================
+         MEMBER 1
+      ================================================= */
 
-      /* Selected NEX IT Event */
+      member1Name:
+        data.participant1.name.trim(),
 
-      event: data.event.trim(),
+      member1RegisterNumber:
+        data.participant1.registerNumber.trim(),
 
-      /* Identify registration */
+      member1Phone:
+        data.participant1.phone.trim(),
 
-      registrationType: "NEX IT",
+      member1Department:
+        data.participant1.department.trim(),
 
-      /* Firebase server timestamp */
+      member1Year:
+        data.participant1.year,
 
-      createdAt: serverTimestamp(),
+      /* =================================================
+         MEMBER 2
+      ================================================= */
+
+      member2Name:
+        isTeamEvent &&
+        data.participant2
+          ? data.participant2.name.trim()
+          : "",
+
+      member2RegisterNumber:
+        isTeamEvent &&
+        data.participant2
+          ? data.participant2.registerNumber.trim()
+          : "",
+
+      member2Phone:
+        isTeamEvent &&
+        data.participant2
+          ? data.participant2.phone.trim()
+          : "",
+
+      member2Department:
+        isTeamEvent &&
+        data.participant2
+          ? data.participant2.department.trim()
+          : "",
+
+      member2Year:
+        isTeamEvent &&
+        data.participant2
+          ? data.participant2.year
+          : "",
+
+      /* =================================================
+         NESTED MEMBER 1
+      ================================================= */
+
+      participant1: {
+        name:
+          data.participant1.name.trim(),
+
+        registerNumber:
+          data.participant1.registerNumber.trim(),
+
+        email:
+          commonEmail,
+
+        phone:
+          data.participant1.phone.trim(),
+
+        department:
+          data.participant1.department.trim(),
+
+        year:
+          data.participant1.year,
+      },
+
+      /* =================================================
+         NESTED MEMBER 2
+      ================================================= */
+
+      participant2:
+        isTeamEvent &&
+        data.participant2
+          ? {
+              name:
+                data.participant2.name.trim(),
+
+              registerNumber:
+                data.participant2
+                  .registerNumber.trim(),
+
+              email:
+                commonEmail,
+
+              phone:
+                data.participant2.phone.trim(),
+
+              department:
+                data.participant2
+                  .department.trim(),
+
+              year:
+                data.participant2.year,
+            }
+          : null,
+
+      /* =================================================
+         STUDY LEVEL
+      ================================================= */
+
+      member1StudyLevel:
+        `${data.program} ${data.participant1.year}`,
+
+      member2StudyLevel:
+        isTeamEvent &&
+        data.participant2
+          ? `${data.program} ${data.participant2.year}`
+          : "",
+
+      /* =================================================
+         TIMESTAMP
+      ================================================= */
+
+      createdAt:
+        serverTimestamp(),
     };
 
     /* =================================================
-       SAVE TO FIRESTORE
-       
-       Collection:
-       nexItRegistrations
+       FIRESTORE COLLECTION
     ================================================= */
 
-    const docRef = await addDoc(
-      collection(db, "nexItRegistrations"),
-      registrationData
-    );
+    const docRef =
+      await addDoc(
+        collection(
+          db,
+          "nexItRegistrations"
+        ),
+        registrationData
+      );
 
     console.log(
-      "NEX IT registration saved successfully:",
+      "NEX IT registration saved:",
       docRef.id
     );
 
     return {
       success: true,
       id: docRef.id,
+      error: "",
     };
 
   } catch (error) {
@@ -139,7 +368,53 @@ export async function registerForNexIt(
     return {
       success: false,
       id: null,
-      error,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Registration failed.",
     };
+  }
+}
+
+/* =====================================================
+   PARTICIPANT VALIDATION
+===================================================== */
+
+function validateParticipant(
+  participant: NexItParticipant,
+  label: string
+) {
+  if (!participant.name?.trim()) {
+    throw new Error(
+      `${label}: Name is required.`
+    );
+  }
+
+  if (
+    !participant.registerNumber?.trim()
+  ) {
+    throw new Error(
+      `${label}: Register number is required.`
+    );
+  }
+
+  if (!participant.phone?.trim()) {
+    throw new Error(
+      `${label}: Phone number is required.`
+    );
+  }
+
+  if (
+    !participant.department?.trim()
+  ) {
+    throw new Error(
+      `${label}: Department is required.`
+    );
+  }
+
+  if (!participant.year) {
+    throw new Error(
+      `${label}: Year is required.`
+    );
   }
 }

@@ -1,96 +1,101 @@
-import { FormEvent, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  FormEvent,
+  useState,
+} from "react";
+
+import {
+  motion,
+  AnimatePresence,
+} from "framer-motion";
+
 import {
   FiCheckCircle,
   FiLoader,
   FiX,
 } from "react-icons/fi";
 
-import { registerForNexIt } from "../firebase/nexItRegistration";
+import {
+  registerForNexIt,
+  type NexItParticipant,
+  type NexItProgram,
+  type NexItYear,
+} from "../firebase/nexItRegistration";
 
 /* =====================================================
-   NEX IT EVENTS
+   EVENTS
 ===================================================== */
 
 const events = [
   {
     id: "poster-design",
     name: "Poster Design",
+    team: false,
   },
   {
     id: "paper-presentation",
     name: "Paper Presentation",
-  },
-  {
-    id: "debugging",
-    name: "Debugging",
+    team: true,
   },
   {
     id: "ai-prompting",
     name: "AI Prompting",
+    team: false,
   },
   {
-    id: "connection",
-    name: "Connection",
+    id: "connections",
+    name: "Connections",
+    team: true,
   },
   {
     id: "cooking-without-fire",
     name: "Cooking Without Fire",
+    team: true,
   },
   {
     id: "wealth-out-of-waste",
     name: "Wealth Out of Waste",
-  },
-  {
-    id: "fake-virus-detection",
-    name: "Fake Virus Detection",
+    team: true,
   },
 ];
 
 /* =====================================================
-   YEAR TYPE
+   EMPTY PARTICIPANT
 ===================================================== */
 
-type Year =
-  | "1st Year"
-  | "2nd Year"
-  | "3rd Year";
-
-/* =====================================================
-   FORM DATA
-===================================================== */
-
-interface FormData {
-  name: string;
-  registerNumber: string;
-  email: string;
-  phone: string;
-  department: string;
-
-  program: "UG" | "PG" | "";
-
-  /*
-   * IMPORTANT:
-   * This must match Firebase exactly.
-   */
-  year: Year | "";
-
-  event: string;
-}
-
-/* =====================================================
-   INITIAL FORM
-===================================================== */
-
-const initialForm: FormData = {
+const emptyParticipant: NexItParticipant = {
   name: "",
   registerNumber: "",
   email: "",
   phone: "",
   department: "",
-  program: "",
   year: "",
+};
+
+/* =====================================================
+   INITIAL FORM
+===================================================== */
+
+interface FormData {
+  event: string;
+  program: NexItProgram | "";
+  email: string;
+
+  participant1: NexItParticipant;
+  participant2: NexItParticipant;
+}
+
+const initialForm: FormData = {
   event: "",
+  program: "",
+  email: "",
+
+  participant1: {
+    ...emptyParticipant,
+  },
+
+  participant2: {
+    ...emptyParticipant,
+  },
 };
 
 /* =====================================================
@@ -98,42 +103,94 @@ const initialForm: FormData = {
 ===================================================== */
 
 export default function NexIT() {
-  const [selectedEvent, setSelectedEvent] =
-    useState("");
 
-  const [showForm, setShowForm] =
-    useState(false);
+  const [
+    selectedEvent,
+    setSelectedEvent,
+  ] = useState("");
 
-  const [form, setForm] =
-    useState<FormData>(initialForm);
+  const [
+    showForm,
+    setShowForm,
+  ] = useState(false);
 
-  const [submitting, setSubmitting] =
-    useState(false);
+  const [
+    form,
+    setForm,
+  ] = useState<FormData>(
+    initialForm
+  );
 
-  const [error, setError] =
-    useState("");
+  const [
+    submitting,
+    setSubmitting,
+  ] = useState(false);
 
-  const [showSuccess, setShowSuccess] =
-    useState(false);
+  const [
+    error,
+    setError,
+  ] = useState("");
+
+  const [
+    showSuccess,
+    setShowSuccess,
+  ] = useState(false);
+
+  /* =====================================================
+     SELECTED EVENT
+  ===================================================== */
+
+  const selectedEventData =
+    events.find(
+      (item) =>
+        item.name === selectedEvent
+    );
+
+  const isTeamEvent =
+    selectedEventData?.team === true;
 
   /* =====================================================
      OPEN REGISTRATION
   ===================================================== */
 
-  function openRegistration(eventName: string) {
-    setSelectedEvent(eventName);
+  function openRegistration(
+    eventName: string
+  ) {
+
+    const selected =
+      events.find(
+        (item) =>
+          item.name === eventName
+      );
+
+    setSelectedEvent(
+      eventName
+    );
 
     setForm({
       ...initialForm,
-      event: eventName,
+
+      event:
+        eventName,
+
+      participant1: {
+        ...emptyParticipant,
+      },
+
+      participant2: {
+        ...emptyParticipant,
+      },
     });
 
     setError("");
+
     setShowForm(true);
 
     setTimeout(() => {
       document
-        .getElementById("nexit-registration")
+        .getElementById(
+          "nexit-registration"
+        )
         ?.scrollIntoView({
           behavior: "smooth",
           block: "start",
@@ -142,17 +199,51 @@ export default function NexIT() {
   }
 
   /* =====================================================
-     UPDATE FIELD
+     UPDATE COMMON FIELD
   ===================================================== */
 
-  function updateField(
-    field: keyof FormData,
+  function updateCommon(
+    field:
+      | "email"
+      | "program",
     value: string
   ) {
-    setForm((current) => ({
-      ...current,
-      [field]: value,
-    }));
+
+    setForm(
+      (current) => ({
+        ...current,
+
+        [field]:
+          value,
+      })
+    );
+  }
+
+  /* =====================================================
+     UPDATE PARTICIPANT
+  ===================================================== */
+
+  function updateParticipant(
+    participant:
+      | "participant1"
+      | "participant2",
+    field:
+      keyof NexItParticipant,
+    value: string
+  ) {
+
+    setForm(
+      (current) => ({
+        ...current,
+
+        [participant]: {
+          ...current[participant],
+
+          [field]:
+            value,
+        },
+      })
+    );
   }
 
   /* =====================================================
@@ -162,6 +253,7 @@ export default function NexIT() {
   async function handleSubmit(
     e: FormEvent<HTMLFormElement>
   ) {
+
     e.preventDefault();
 
     if (submitting) {
@@ -172,19 +264,14 @@ export default function NexIT() {
     setSubmitting(true);
 
     try {
-      /* -----------------------------------------------
-         BASIC VALIDATION
-      ------------------------------------------------ */
 
-      if (!form.name.trim()) {
-        throw new Error(
-          "Please enter your name."
-        );
-      }
+      /* ===============================================
+         VALIDATION
+      =============================================== */
 
-      if (!form.registerNumber.trim()) {
+      if (!form.event) {
         throw new Error(
-          "Please enter your register number."
+          "Please select an event."
         );
       }
 
@@ -194,87 +281,203 @@ export default function NexIT() {
         );
       }
 
-      if (!form.phone.trim()) {
-        throw new Error(
-          "Please enter your mobile number."
-        );
-      }
-
-      if (!form.department.trim()) {
-        throw new Error(
-          "Please enter your department."
-        );
-      }
-
       if (!form.program) {
         throw new Error(
           "Please select UG or PG."
         );
       }
 
-      if (!form.year) {
+      if (
+        !form.participant1.name.trim()
+      ) {
         throw new Error(
-          "Please select your year."
+          "Please enter Member 1 name."
         );
       }
 
-      if (!form.event) {
+      if (
+        !form.participant1
+          .registerNumber
+          .trim()
+      ) {
         throw new Error(
-          "Please select an event."
+          "Please enter Member 1 register number."
         );
       }
 
-      /* -----------------------------------------------
-         FIREBASE REGISTRATION
-      ------------------------------------------------ */
+      if (
+        !form.participant1.phone.trim()
+      ) {
+        throw new Error(
+          "Please enter Member 1 phone number."
+        );
+      }
+
+      if (
+        !form.participant1
+          .department
+          .trim()
+      ) {
+        throw new Error(
+          "Please enter Member 1 department."
+        );
+      }
+
+      if (!form.participant1.year) {
+        throw new Error(
+          "Please select Member 1 year."
+        );
+      }
+
+      /* ===============================================
+         TEAM MEMBER 2
+      =============================================== */
+
+      if (isTeamEvent) {
+
+        if (
+          !form.participant2.name.trim()
+        ) {
+          throw new Error(
+            "Please enter Member 2 name."
+          );
+        }
+
+        if (
+          !form.participant2
+            .registerNumber
+            .trim()
+        ) {
+          throw new Error(
+            "Please enter Member 2 register number."
+          );
+        }
+
+        if (
+          !form.participant2.phone.trim()
+        ) {
+          throw new Error(
+            "Please enter Member 2 phone number."
+          );
+        }
+
+        if (
+          !form.participant2
+            .department
+            .trim()
+        ) {
+          throw new Error(
+            "Please enter Member 2 department."
+          );
+        }
+
+        if (!form.participant2.year) {
+          throw new Error(
+            "Please select Member 2 year."
+          );
+        }
+      }
+
+      /* ===============================================
+         FIREBASE
+      =============================================== */
+
+      const participant1: NexItParticipant = {
+        ...form.participant1,
+
+        email:
+          form.email
+            .trim()
+            .toLowerCase(),
+
+        year:
+          form.participant1.year as NexItYear,
+      };
+
+      let participant2:
+        | NexItParticipant
+        | undefined;
+
+      if (isTeamEvent) {
+
+        participant2 = {
+          ...form.participant2,
+
+          email:
+            form.email
+              .trim()
+              .toLowerCase(),
+
+          year:
+            form.participant2.year as NexItYear,
+        };
+      }
 
       const result =
         await registerForNexIt({
-          name: form.name,
-          registerNumber:
-            form.registerNumber,
-          email: form.email,
-          phone: form.phone,
-          department:
-            form.department,
-          program: form.program,
-          year: form.year,
-          event: form.event,
+
+          event:
+            form.event,
+
+          email:
+            form.email
+              .trim()
+              .toLowerCase(),
+
+          program:
+            form.program as NexItProgram,
+
+          participant1,
+
+          ...(participant2
+            ? {
+                participant2,
+              }
+            : {}),
         });
 
+      /* ===============================================
+         RESULT
+      =============================================== */
+
       if (!result.success) {
+
         throw new Error(
-          "Registration failed. Please try again."
+          result.error ||
+            "Registration failed. Please try again."
         );
       }
 
-      /* -----------------------------------------------
+      /* ===============================================
          SUCCESS
-      ------------------------------------------------ */
+      =============================================== */
 
       setShowForm(false);
+
       setShowSuccess(true);
 
-      /*
-       * Do not reset form here.
-       * The success popup needs program/year.
-       */
+    } catch (err) {
 
-    } catch (error) {
       console.error(
         "NEX IT registration error:",
-        error
+        err
       );
 
       setError(
-        error instanceof Error
-          ? error.message
+        err instanceof Error
+          ? err.message
           : "Registration failed. Please try again."
       );
+
     } finally {
+
       setSubmitting(false);
     }
   }
+
+  /* =====================================================
+     RETURN
+  ===================================================== */
 
   return (
     <div className="min-h-screen bg-ink-950 text-paper-100">
@@ -312,7 +515,7 @@ export default function NexIT() {
           >
 
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.45em] text-neon-cyan">
-              Techno Feast 2026
+              INTER-DEPARTMENT FUNCTION
             </p>
 
             <h1 className="bg-gradient-to-r from-neon-cyan via-neon-blue to-neon-purple bg-clip-text text-5xl font-black tracking-wide text-transparent sm:text-7xl">
@@ -329,6 +532,10 @@ export default function NexIT() {
               showcase your skills.
             </p>
 
+            <div className="mt-6 inline-flex rounded-full border border-neon-cyan/30 bg-neon-cyan/10 px-6 py-3 text-xs font-bold uppercase tracking-widest text-neon-cyan">
+              FREE REGISTRATION
+            </div>
+
           </motion.div>
 
         </div>
@@ -342,20 +549,7 @@ export default function NexIT() {
 
         <div className="mx-auto max-w-6xl">
 
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="mb-10 text-center"
-          >
+          <div className="mb-10 text-center">
 
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-neon-cyan">
               NEX IT
@@ -365,37 +559,42 @@ export default function NexIT() {
               Events
             </h2>
 
-          </motion.div>
+          </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
             {events.map(
               (event, index) => (
 
                 <motion.div
                   key={event.id}
+
                   initial={{
                     opacity: 0,
                     y: 25,
                   }}
+
                   whileInView={{
                     opacity: 1,
                     y: 0,
                   }}
+
                   viewport={{
                     once: true,
                   }}
+
                   transition={{
-                    delay: index * 0.05,
+                    delay:
+                      index * 0.05,
                   }}
+
                   className="group glass-card rounded-2xl border border-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-neon-cyan/40 hover:shadow-glow-cyan"
                 >
 
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-neon-blue/20 to-neon-purple/20 text-lg font-bold text-neon-cyan">
-                    {String(index + 1).padStart(
-                      2,
-                      "0"
-                    )}
+                    {String(
+                      index + 1
+                    ).padStart(2, "0")}
                   </div>
 
                   <h3 className="min-h-[56px] text-lg font-bold">
@@ -403,7 +602,13 @@ export default function NexIT() {
                   </h3>
 
                   <p className="mt-2 text-xs text-paper-100/50">
-                    NEX IT Event
+                    {event.team
+                      ? "Team Event • 2 Members"
+                      : "Individual Event"}
+                  </p>
+
+                  <p className="mt-2 text-xs font-semibold text-neon-cyan">
+                    FREE REGISTRATION
                   </p>
 
                   <button
@@ -425,11 +630,10 @@ export default function NexIT() {
           </div>
 
         </div>
-
       </section>
 
       {/* =================================================
-          REGISTRATION FORM
+          REGISTRATION
       ================================================= */}
 
       <AnimatePresence>
@@ -438,24 +642,30 @@ export default function NexIT() {
 
           <motion.section
             id="nexit-registration"
+
             initial={{
               opacity: 0,
               y: 30,
             }}
+
             animate={{
               opacity: 1,
               y: 0,
             }}
+
             exit={{
               opacity: 0,
               y: 30,
             }}
+
             className="px-5 pb-24 sm:px-8"
           >
 
-            <div className="mx-auto max-w-3xl">
+            <div className="mx-auto max-w-4xl">
 
               <div className="glass-card rounded-3xl border border-white/10 p-6 shadow-glow sm:p-10">
+
+                {/* HEADER */}
 
                 <div className="mb-8">
 
@@ -468,279 +678,66 @@ export default function NexIT() {
                   </h2>
 
                   <p className="mt-2 text-sm text-paper-100/50">
-                    Fill in your details to register.
+                    {isTeamEvent
+                      ? "Team event — enter details for both members."
+                      : "Individual event — enter your details."}
                   </p>
 
                 </div>
 
                 <form
-                  onSubmit={handleSubmit}
-                  className="grid gap-5 sm:grid-cols-2"
+                  onSubmit={
+                    handleSubmit
+                  }
+                  className="space-y-8"
                 >
 
-                  {/* NAME */}
-
-                  <Field
-                    label="Full Name"
-                    required
-                    value={form.name}
-                    onChange={(value) =>
-                      updateField(
-                        "name",
-                        value
-                      )
-                    }
-                  />
-
-                  {/* REGISTER NUMBER */}
-
-                  <Field
-                    label="Register Number"
-                    required
-                    value={
-                      form.registerNumber
-                    }
-                    onChange={(value) =>
-                      updateField(
-                        "registerNumber",
-                        value
-                      )
-                    }
-                  />
-
-                  {/* EMAIL */}
-
-                  <Field
-                    label="Email Address"
-                    type="email"
-                    required
-                    value={form.email}
-                    onChange={(value) =>
-                      updateField(
-                        "email",
-                        value
-                      )
-                    }
-                  />
-
-                  {/* PHONE */}
-
-                  <Field
-                    label="Mobile Number"
-                    type="tel"
-                    required
-                    value={form.phone}
-                    onChange={(value) =>
-                      updateField(
-                        "phone",
-                        value
-                      )
-                    }
-                  />
-
-                  {/* DEPARTMENT */}
-
-                  <Field
-                    label="Department"
-                    required
-                    value={
-                      form.department
-                    }
-                    placeholder="e.g. B.Sc IT"
-                    onChange={(value) =>
-                      updateField(
-                        "department",
-                        value
-                      )
-                    }
-                  />
-
-                  {/* PROGRAM */}
+                  {/* =================================================
+                      EVENT
+                  ================================================= */}
 
                   <div>
 
-                    <label className="mb-1 block text-xs font-medium text-paper-100/70">
-
-                      Program
-
-                      <span className="text-red-400">
-                        {" "}*
-                      </span>
-
-                    </label>
-
-                    <select
-                      required
-                      value={form.program}
-                      onChange={(e) => {
-
-                        const value =
-                          e.target.value as
-                            | "UG"
-                            | "PG"
-                            | "";
-
-                        setForm((current) => ({
-                          ...current,
-                          program: value,
-                          year: "",
-                        }));
-
-                      }}
-                      className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-sm text-paper-100 outline-none transition focus:border-neon-cyan/60 focus:shadow-glow-cyan"
-                    >
-
-                      <option
-                        value=""
-                        className="bg-ink-800"
-                      >
-                        Select Program
-                      </option>
-
-                      <option
-                        value="UG"
-                        className="bg-ink-800"
-                      >
-                        UG
-                      </option>
-
-                      <option
-                        value="PG"
-                        className="bg-ink-800"
-                      >
-                        PG
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                  {/* YEAR */}
-
-                  <div>
-
-                    <label className="mb-1 block text-xs font-medium text-paper-100/70">
-
-                      Year
-
-                      <span className="text-red-400">
-                        {" "}*
-                      </span>
-
-                    </label>
-
-                    <select
-                      required
-                      value={form.year}
-                      disabled={!form.program}
-                      onChange={(e) => {
-
-                        const value =
-                          e.target.value as Year | "";
-
-                        setForm((current) => ({
-                          ...current,
-                          year: value,
-                        }));
-
-                      }}
-                      className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-sm text-paper-100 outline-none transition focus:border-neon-cyan/60 focus:shadow-glow-cyan disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-
-                      <option
-                        value=""
-                        className="bg-ink-800"
-                      >
-                        {form.program
-                          ? "Select Year"
-                          : "Select Program First"}
-                      </option>
-
-                      {form.program === "UG" && (
-                        <>
-                          <option
-                            value="1st Year"
-                            className="bg-ink-800"
-                          >
-                            1st Year
-                          </option>
-
-                          <option
-                            value="2nd Year"
-                            className="bg-ink-800"
-                          >
-                            2nd Year
-                          </option>
-
-                          <option
-                            value="3rd Year"
-                            className="bg-ink-800"
-                          >
-                            3rd Year
-                          </option>
-                        </>
-                      )}
-
-                      {form.program === "PG" && (
-                        <>
-                          <option
-                            value="1st Year"
-                            className="bg-ink-800"
-                          >
-                            1st Year
-                          </option>
-
-                          <option
-                            value="2nd Year"
-                            className="bg-ink-800"
-                          >
-                            2nd Year
-                          </option>
-                        </>
-                      )}
-
-                    </select>
-
-                  </div>
-
-                  {/* EVENT */}
-
-                  <div className="sm:col-span-2">
-
-                    <label className="mb-1 block text-xs font-medium text-paper-100/70">
+                    <label className="mb-2 block text-sm font-medium">
                       Event
                     </label>
 
                     <select
-                      required
-                      value={form.event}
+                      value={
+                        form.event
+                      }
+
                       onChange={(e) =>
-                        updateField(
-                          "event",
-                          e.target.value
+                        setForm(
+                          (current) => ({
+                            ...current,
+                            event:
+                              e.target.value,
+                          })
                         )
                       }
+
+                      required
+
                       className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-sm text-paper-100 outline-none focus:border-neon-cyan/60"
                     >
 
-                      <option
-                        value=""
-                        className="bg-ink-800"
-                      >
+                      <option value="">
                         Select Event
                       </option>
 
                       {events.map(
                         (event) => (
-
                           <option
-                            key={event.id}
-                            value={event.name}
-                            className="bg-ink-800"
+                            key={
+                              event.id
+                            }
+                            value={
+                              event.name
+                            }
                           >
                             {event.name}
                           </option>
-
                         )
                       )}
 
@@ -748,11 +745,110 @@ export default function NexIT() {
 
                   </div>
 
-                  {/* ERROR */}
+                  {/* =================================================
+                      COMMON EMAIL + PROGRAM
+                  ================================================= */}
+
+                  <div className="grid gap-5 sm:grid-cols-2">
+
+                    <Input
+                      label="Common Email"
+                      type="email"
+                      value={
+                        form.email
+                      }
+                      required
+                      placeholder="Enter common email"
+                      onChange={(value) =>
+                        updateCommon(
+                          "email",
+                          value
+                        )
+                      }
+                    />
+
+                    <div>
+
+                      <label className="mb-2 block text-sm font-medium">
+                        Program
+                        <span className="ml-1 text-red-400">
+                          *
+                        </span>
+                      </label>
+
+                      <select
+                        required
+                        value={
+                          form.program
+                        }
+                        onChange={(e) =>
+                          updateCommon(
+                            "program",
+                            e.target.value
+                          )
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-sm text-paper-100 outline-none focus:border-neon-cyan/60"
+                      >
+
+                        <option value="">
+                          Select Program
+                        </option>
+
+                        <option value="UG">
+                          UG
+                        </option>
+
+                        <option value="PG">
+                          PG
+                        </option>
+
+                      </select>
+
+                    </div>
+
+                  </div>
+
+                  {/* =================================================
+                      MEMBER 1
+                  ================================================= */}
+
+                  <ParticipantSection
+                    title="Member 1"
+                    participant={
+                      form.participant1
+                    }
+                    updateParticipant={
+                      updateParticipant
+                    }
+                    participantKey="participant1"
+                  />
+
+                  {/* =================================================
+                      MEMBER 2
+                  ================================================= */}
+
+                  {isTeamEvent && (
+
+                    <ParticipantSection
+                      title="Member 2"
+                      participant={
+                        form.participant2
+                      }
+                      updateParticipant={
+                        updateParticipant
+                      }
+                      participantKey="participant2"
+                    />
+
+                  )}
+
+                  {/* =================================================
+                      ERROR
+                  ================================================= */}
 
                   {error && (
 
-                    <div className="sm:col-span-2 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+                    <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
 
                       <p className="text-sm text-red-400">
                         {error}
@@ -762,14 +858,18 @@ export default function NexIT() {
 
                   )}
 
-                  {/* BUTTONS */}
+                  {/* =================================================
+                      BUTTONS
+                  ================================================= */}
 
-                  <div className="flex flex-col gap-3 pt-2 sm:col-span-2 sm:flex-row">
+                  <div className="flex flex-col gap-3 sm:flex-row">
 
                     <button
                       type="submit"
-                      disabled={submitting}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue to-neon-purple px-5 py-3 font-bold transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={
+                        submitting
+                      }
+                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue to-neon-purple px-5 py-3 font-bold transition hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-60"
                     >
 
                       {submitting ? (
@@ -785,9 +885,13 @@ export default function NexIT() {
 
                     <button
                       type="button"
-                      disabled={submitting}
+                      disabled={
+                        submitting
+                      }
                       onClick={() => {
-                        setShowForm(false);
+                        setShowForm(
+                          false
+                        );
                         setError("");
                       }}
                       className="rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-paper-100/70 transition hover:bg-white/5 hover:text-white"
@@ -819,38 +923,40 @@ export default function NexIT() {
 
           <motion.div
             className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 px-5 backdrop-blur-md"
+
             initial={{
               opacity: 0,
             }}
+
             animate={{
               opacity: 1,
             }}
+
             exit={{
               opacity: 0,
             }}
           >
 
             <motion.div
+
               initial={{
                 opacity: 0,
                 scale: 0.85,
                 y: 20,
               }}
+
               animate={{
                 opacity: 1,
                 scale: 1,
                 y: 0,
               }}
+
               exit={{
                 opacity: 0,
                 scale: 0.85,
                 y: 20,
               }}
-              transition={{
-                type: "spring",
-                stiffness: 250,
-                damping: 20,
-              }}
+
               className="relative w-full max-w-md rounded-3xl border border-neon-cyan/30 bg-ink-900 p-8 text-center shadow-[0_0_80px_rgba(34,211,238,0.25)]"
             >
 
@@ -859,40 +965,29 @@ export default function NexIT() {
               <button
                 type="button"
                 onClick={() =>
-                  setShowSuccess(false)
+                  setShowSuccess(
+                    false
+                  )
                 }
                 className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-paper-100/50 transition hover:bg-white/10 hover:text-white"
               >
                 <FiX />
               </button>
 
-              {/* SUCCESS ICON */}
+              {/* ICON */}
 
-              <motion.div
-                initial={{
-                  scale: 0,
-                }}
-                animate={{
-                  scale: 1,
-                }}
-                transition={{
-                  delay: 0.15,
-                  type: "spring",
-                }}
-                className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-neon-cyan/10"
-              >
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-neon-cyan/10">
 
                 <FiCheckCircle className="text-5xl text-neon-cyan" />
 
-              </motion.div>
+              </div>
 
               <h2 className="mt-6 text-2xl font-black">
                 Registration Successful!
               </h2>
 
               <p className="mt-3 text-sm leading-6 text-paper-100/60">
-                Your NEX IT registration has
-                been successfully submitted.
+                Your NEX IT registration has been successfully submitted.
               </p>
 
               {/* EVENT */}
@@ -909,47 +1004,54 @@ export default function NexIT() {
 
               </div>
 
-              {/* PROGRAM + YEAR */}
+              {/* PROGRAM */}
 
-              <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-4">
 
-                <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <p className="text-[10px] uppercase tracking-widest text-paper-100/40">
+                  Program
+                </p>
 
-                  <p className="text-[10px] uppercase tracking-widest text-paper-100/40">
-                    Program
-                  </p>
+                <p className="mt-1 font-bold text-neon-cyan">
+                  {form.program}
+                </p>
 
-                  <p className="mt-1 font-bold text-neon-cyan">
-                    {form.program || "Saved"}
-                  </p>
+              </div>
 
-                </div>
+              {/* EMAIL */}
 
-                <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+              <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-4">
 
-                  <p className="text-[10px] uppercase tracking-widest text-paper-100/40">
-                    Year
-                  </p>
+                <p className="text-[10px] uppercase tracking-widest text-paper-100/40">
+                  Email
+                </p>
 
-                  <p className="mt-1 font-bold text-neon-cyan">
-                    {form.year || "Saved"}
-                  </p>
-
-                </div>
+                <p className="mt-1 break-all text-sm font-bold text-neon-cyan">
+                  {form.email}
+                </p>
 
               </div>
 
               <p className="mt-5 text-xs text-paper-100/40">
-                Your registration details have
-                been saved to Firebase.
+                Your registration details have been saved to Firebase.
               </p>
 
               <button
                 type="button"
                 onClick={() => {
-                  setShowSuccess(false);
-                  setForm(initialForm);
-                  setSelectedEvent("");
+
+                  setShowSuccess(
+                    false
+                  );
+
+                  setForm(
+                    initialForm
+                  );
+
+                  setSelectedEvent(
+                    ""
+                  );
+
                 }}
                 className="mt-6 w-full rounded-xl bg-gradient-to-r from-neon-blue to-neon-purple px-5 py-3 font-bold transition hover:shadow-glow"
               >
@@ -968,11 +1070,185 @@ export default function NexIT() {
   );
 }
 
-/* =========================================================
-   FIELD COMPONENT
-========================================================= */
+/* =====================================================
+   PARTICIPANT SECTION
+===================================================== */
 
-function Field({
+function ParticipantSection({
+  title,
+  participant,
+  updateParticipant,
+  participantKey,
+}: {
+  title: string;
+
+  participant:
+    NexItParticipant;
+
+  updateParticipant: (
+    participant:
+      | "participant1"
+      | "participant2",
+    field:
+      keyof NexItParticipant,
+    value: string
+  ) => void;
+
+  participantKey:
+    | "participant1"
+    | "participant2";
+}) {
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6">
+
+      <div className="mb-6">
+
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neon-cyan">
+          Participant Details
+        </p>
+
+        <h3 className="mt-2 text-xl font-bold">
+          {title}
+        </h3>
+
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+
+        {/* NAME */}
+
+        <Input
+          label="Name"
+          value={
+            participant.name
+          }
+          required
+          placeholder="Enter name"
+          onChange={(value) =>
+            updateParticipant(
+              participantKey,
+              "name",
+              value
+            )
+          }
+        />
+
+        {/* REGISTER NUMBER */}
+
+        <Input
+          label="Register Number"
+          value={
+            participant.registerNumber
+          }
+          required
+          placeholder="Enter register number"
+          onChange={(value) =>
+            updateParticipant(
+              participantKey,
+              "registerNumber",
+              value
+            )
+          }
+        />
+
+        {/* PHONE */}
+
+        <Input
+          label="Phone Number"
+          type="tel"
+          value={
+            participant.phone
+          }
+          required
+          placeholder="Enter phone number"
+          onChange={(value) =>
+            updateParticipant(
+              participantKey,
+              "phone",
+              value
+            )
+          }
+        />
+
+        {/* DEPARTMENT */}
+
+        <Input
+          label="Department"
+          value={
+            participant.department
+          }
+          required
+          placeholder="e.g. B.Sc IT"
+          onChange={(value) =>
+            updateParticipant(
+              participantKey,
+              "department",
+              value
+            )
+          }
+        />
+
+        {/* YEAR */}
+
+        <div>
+
+          <label className="mb-2 block text-sm font-medium">
+
+            Year
+
+            <span className="ml-1 text-red-400">
+              *
+            </span>
+
+          </label>
+
+          <select
+            required
+            value={
+              participant.year
+            }
+            onChange={(e) =>
+              updateParticipant(
+                participantKey,
+                "year",
+                e.target.value
+              )
+            }
+            className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-sm text-paper-100 outline-none focus:border-neon-cyan/60"
+          >
+
+            <option value="">
+              Select Year
+            </option>
+
+            <option value="1st Year">
+              1st Year
+            </option>
+
+            <option value="2nd Year">
+              2nd Year
+            </option>
+
+            <option value="3rd Year">
+              3rd Year
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+function Input({
   label,
   value,
   onChange,
@@ -982,21 +1258,24 @@ function Field({
 }: {
   label: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange: (
+    value: string
+  ) => void;
   required?: boolean;
   type?: string;
   placeholder?: string;
 }) {
+
   return (
     <div>
 
-      <label className="mb-1 block text-xs font-medium text-paper-100/70">
+      <label className="mb-2 block text-sm font-medium">
 
         {label}
 
         {required && (
-          <span className="text-red-400">
-            {" "}*
+          <span className="ml-1 text-red-400">
+            *
           </span>
         )}
 
@@ -1004,11 +1283,15 @@ function Field({
 
       <input
         type={type}
-        required={required}
         value={value}
-        placeholder={placeholder}
+        required={required}
+        placeholder={
+          placeholder
+        }
         onChange={(e) =>
-          onChange(e.target.value)
+          onChange(
+            e.target.value
+          )
         }
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-paper-100 outline-none transition placeholder:text-white/25 focus:border-neon-cyan/60 focus:shadow-glow-cyan"
       />
