@@ -41,27 +41,29 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-[9000] transition-all duration-500 ${
-        scrolled ? 'py-2' : 'py-4'
+        scrolled ? 'py-1.5 sm:py-2' : 'py-2 sm:py-4'
       }`}
     >
       <nav
-        className={`mx-auto flex max-w-7xl items-center justify-between rounded-full px-5 transition-all duration-500 ${
-          scrolled ? 'glass-card py-2' : 'bg-transparent py-2'
+        className={`mx-auto flex w-full max-w-7xl items-center justify-between rounded-full px-3 sm:px-5 transition-all duration-500 ${
+          scrolled
+            ? 'glass-card py-1.5 sm:py-2'
+            : 'bg-transparent py-1.5 sm:py-2'
         }`}
       >
-        {/* ================================
-            SRCAS LOGO + BRAND
-        ================================= */}
+        {/* =====================================================
+            LOGO + SRCAS / TECHNO FEAST 2026
+        ====================================================== */}
         <NavLink
           to="/"
-          className="flex items-center gap-3 font-display font-bold tracking-wide"
+          className="flex min-w-0 items-center gap-2 font-display font-bold tracking-wide sm:gap-3"
         >
-          {/* Circular SRCAS Logo */}
+          {/* SRCAS LOGO */}
           <div
             className="
               flex
-              h-12
-              w-12
+              h-11
+              w-11
               shrink-0
               items-center
               justify-center
@@ -86,21 +88,28 @@ export default function Navbar() {
             />
           </div>
 
-          {/* Brand Text */}
-          <div className="hidden sm:block">
-            <span className="block gradient-text text-sm font-bold sm:text-base">
-              B.Sc. IT · SRCAS
+          {/* BRAND TEXT */}
+          <div className="min-w-0 max-w-[145px] leading-[1.05] sm:max-w-none">
+            {/* Mobile */}
+            <span className="block truncate gradient-text text-[13px] font-bold tracking-wide sm:text-base">
+              <span className="sm:hidden">SRCAS</span>
+
+              {/* Laptop / Desktop */}
+              <span className="hidden sm:inline">
+                B.Sc. IT · SRCAS
+              </span>
             </span>
 
-            <span className="block text-[10px] font-medium tracking-wider text-paper-100/60">
+            {/* TECHNO FEAST */}
+            <span className="mt-0.5 block truncate text-[8px] font-medium tracking-[0.14em] text-paper-100/60 sm:text-[10px] sm:tracking-wider">
               TECHNO FEAST 2026
             </span>
           </div>
         </NavLink>
 
-        {/* ================================
+        {/* =====================================================
             DESKTOP NAVIGATION
-        ================================= */}
+        ====================================================== */}
         <div className="hidden items-center gap-1 lg:flex">
           {links.map((link) => (
             <NavLink
@@ -119,19 +128,30 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* ================================
+        {/* =====================================================
             RIGHT SIDE CONTROLS
-        ================================= */}
-        <div className="flex items-center gap-2">
-          <SearchBar />
+        ====================================================== */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
 
-          <MusicToggle />
+          {/* Search - Desktop/Tablet */}
+          <div className="hidden sm:block">
+            <SearchBar />
+          </div>
 
-          <NotificationBell />
+          {/* Music - Desktop/Tablet */}
+          <div className="hidden sm:block">
+            <MusicToggle />
+          </div>
 
+          {/* Notification - Desktop/Tablet */}
+          <div className="hidden sm:block">
+            <NotificationBell />
+          </div>
+
+          {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu */}
           <button
             type="button"
             aria-label={open ? 'Close menu' : 'Open menu'}
@@ -154,14 +174,18 @@ export default function Navbar() {
               lg:hidden
             "
           >
-            {open ? <FiX size={20} /> : <FiMenu size={20} />}
+            {open ? (
+              <FiX size={20} />
+            ) : (
+              <FiMenu size={20} />
+            )}
           </button>
         </div>
       </nav>
 
-      {/* ================================
+      {/* =====================================================
           MOBILE MENU
-      ================================= */}
+      ====================================================== */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -183,7 +207,16 @@ export default function Navbar() {
             transition={{
               duration: 0.2,
             }}
-            className="glass-card mx-4 mt-2 flex flex-col gap-1 p-4 lg:hidden"
+            className="
+              glass-card
+              mx-4
+              mt-2
+              flex
+              flex-col
+              gap-1
+              p-4
+              lg:hidden
+            "
           >
             {links.map((link) => (
               <NavLink

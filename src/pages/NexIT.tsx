@@ -1,6 +1,11 @@
 import { FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiCheckCircle, FiLoader, FiX } from "react-icons/fi";
+import {
+  FiCheckCircle,
+  FiLoader,
+  FiX,
+} from "react-icons/fi";
+
 import { registerForNexIt } from "../firebase/nexItRegistration";
 
 /* =====================================================
@@ -43,6 +48,15 @@ const events = [
 ];
 
 /* =====================================================
+   YEAR TYPE
+===================================================== */
+
+type Year =
+  | "1st Year"
+  | "2nd Year"
+  | "3rd Year";
+
+/* =====================================================
    FORM DATA
 ===================================================== */
 
@@ -53,12 +67,20 @@ interface FormData {
   phone: string;
   department: string;
 
-  /* NEW */
   program: "UG" | "PG" | "";
-  year: string;
+
+  /*
+   * IMPORTANT:
+   * This must match Firebase exactly.
+   */
+  year: Year | "";
 
   event: string;
 }
+
+/* =====================================================
+   INITIAL FORM
+===================================================== */
 
 const initialForm: FormData = {
   name: "",
@@ -76,9 +98,11 @@ const initialForm: FormData = {
 ===================================================== */
 
 export default function NexIT() {
-  const [selectedEvent, setSelectedEvent] = useState("");
+  const [selectedEvent, setSelectedEvent] =
+    useState("");
 
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] =
+    useState(false);
 
   const [form, setForm] =
     useState<FormData>(initialForm);
@@ -149,8 +173,38 @@ export default function NexIT() {
 
     try {
       /* -----------------------------------------------
-         VALIDATION
+         BASIC VALIDATION
       ------------------------------------------------ */
+
+      if (!form.name.trim()) {
+        throw new Error(
+          "Please enter your name."
+        );
+      }
+
+      if (!form.registerNumber.trim()) {
+        throw new Error(
+          "Please enter your register number."
+        );
+      }
+
+      if (!form.email.trim()) {
+        throw new Error(
+          "Please enter your email."
+        );
+      }
+
+      if (!form.phone.trim()) {
+        throw new Error(
+          "Please enter your mobile number."
+        );
+      }
+
+      if (!form.department.trim()) {
+        throw new Error(
+          "Please enter your department."
+        );
+      }
 
       if (!form.program) {
         throw new Error(
@@ -164,8 +218,14 @@ export default function NexIT() {
         );
       }
 
+      if (!form.event) {
+        throw new Error(
+          "Please select an event."
+        );
+      }
+
       /* -----------------------------------------------
-         FIREBASE
+         FIREBASE REGISTRATION
       ------------------------------------------------ */
 
       const result =
@@ -184,7 +244,7 @@ export default function NexIT() {
 
       if (!result.success) {
         throw new Error(
-          "Registration failed"
+          "Registration failed. Please try again."
         );
       }
 
@@ -193,10 +253,12 @@ export default function NexIT() {
       ------------------------------------------------ */
 
       setShowForm(false);
-
       setShowSuccess(true);
 
-      setForm(initialForm);
+      /*
+       * Do not reset form here.
+       * The success popup needs program/year.
+       */
 
     } catch (error) {
       console.error(
@@ -395,8 +457,6 @@ export default function NexIT() {
 
               <div className="glass-card rounded-3xl border border-white/10 p-6 shadow-glow sm:p-10">
 
-                {/* FORM HEADER */}
-
                 <div className="mb-8">
 
                   <p className="text-xs font-semibold uppercase tracking-[0.3em] text-neon-cyan">
@@ -418,7 +478,7 @@ export default function NexIT() {
                   className="grid gap-5 sm:grid-cols-2"
                 >
 
-                  {/* FULL NAME */}
+                  {/* NAME */}
 
                   <Field
                     label="Full Name"
@@ -495,9 +555,7 @@ export default function NexIT() {
                     }
                   />
 
-                  {/* =================================================
-                      PROGRAM — UG / PG
-                  ================================================= */}
+                  {/* PROGRAM */}
 
                   <div>
 
@@ -516,17 +574,18 @@ export default function NexIT() {
                       value={form.program}
                       onChange={(e) => {
 
-                        updateField(
-                          "program",
-                          e.target.value
-                        );
+                        const value =
+                          e.target.value as
+                            | "UG"
+                            | "PG"
+                            | "";
 
-                        /* Reset year when program changes */
+                        setForm((current) => ({
+                          ...current,
+                          program: value,
+                          year: "",
+                        }));
 
-                        updateField(
-                          "year",
-                          ""
-                        );
                       }}
                       className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-sm text-paper-100 outline-none transition focus:border-neon-cyan/60 focus:shadow-glow-cyan"
                     >
@@ -556,9 +615,7 @@ export default function NexIT() {
 
                   </div>
 
-                  {/* =================================================
-                      YEAR
-                  ================================================= */}
+                  {/* YEAR */}
 
                   <div>
 
@@ -576,12 +633,17 @@ export default function NexIT() {
                       required
                       value={form.year}
                       disabled={!form.program}
-                      onChange={(e) =>
-                        updateField(
-                          "year",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => {
+
+                        const value =
+                          e.target.value as Year | "";
+
+                        setForm((current) => ({
+                          ...current,
+                          year: value,
+                        }));
+
+                      }}
                       className="w-full rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-sm text-paper-100 outline-none transition focus:border-neon-cyan/60 focus:shadow-glow-cyan disabled:cursor-not-allowed disabled:opacity-50"
                     >
 
@@ -593,8 +655,6 @@ export default function NexIT() {
                           ? "Select Year"
                           : "Select Program First"}
                       </option>
-
-                      {/* UG */}
 
                       {form.program === "UG" && (
                         <>
@@ -620,8 +680,6 @@ export default function NexIT() {
                           </option>
                         </>
                       )}
-
-                      {/* PG */}
 
                       {form.program === "PG" && (
                         <>
@@ -888,9 +946,11 @@ export default function NexIT() {
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowSuccess(false)
-                }
+                onClick={() => {
+                  setShowSuccess(false);
+                  setForm(initialForm);
+                  setSelectedEvent("");
+                }}
                 className="mt-6 w-full rounded-xl bg-gradient-to-r from-neon-blue to-neon-purple px-5 py-3 font-bold transition hover:shadow-glow"
               >
                 Done
