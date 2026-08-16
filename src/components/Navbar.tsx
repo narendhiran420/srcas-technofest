@@ -1,71 +1,135 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiMenu,
-  FiX,
-  FiSearch,
-  FiVolume2,
-  FiVolumeX,
-  FiBell,
-  FiMoon,
-  FiSun,
-} from "react-icons/fi";
+import { FiMenu, FiX, FiSearch } from "react-icons/fi";
 
 import ThemeToggle from "./ThemeToggle";
 import SearchBar from "./SearchBar";
 import NotificationBell from "./NotificationBell";
 import MusicToggle from "./MusicToggle";
 
-/* =========================================================
-   NAVIGATION LINKS
-========================================================= */
-
 const links = [
-  {
-    to: "/",
-    label: "Home",
-  },
-  {
-    to: "/about",
-    label: "About",
-  },
-  {
-    to: "/technofeast",
-    label: "Techno Feast",
-  },
-  {
-    to: "/events",
-    label: "Events",
-  },
-  {
-    to: "/nex-it",
-    label: "NEX IT",
-  },
-  {
-    to: "/student-corner",
-    label: "Student Corner",
-  },
-  {
-    to: "/contact",
-    label: "Contact",
-  },
+  { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
+  { to: "/technofeast", label: "Techno Feast" },
+  { to: "/events", label: "Events" },
+  { to: "/nex-it", label: "NEX IT" },
+  { to: "/student-corner", label: "Student Corner" },
+  { to: "/contact", label: "Contact" },
 ];
 
-/* =========================================================
-   NAVBAR
-========================================================= */
+function SRCASBrand() {
+  return (
+    <NavLink
+      to="/"
+      className="
+        relative
+        z-[100]
+        flex
+        min-w-0
+        shrink-0
+        items-center
+        gap-2.5
+        overflow-visible
+        sm:gap-3
+      "
+    >
+      {/* ==================================================
+          SRCAS LOGO
+          File:
+          public/assets/srcas-logo.png
+
+          Vite URL:
+          /assets/srcas-logo.png
+      ================================================== */}
+
+      <div
+        className="
+          relative
+          z-[100]
+          flex
+          h-[42px]
+          w-[42px]
+          min-h-[42px]
+          min-w-[42px]
+          shrink-0
+          items-center
+          justify-center
+          overflow-hidden
+          rounded-full
+          bg-white
+          sm:h-[50px]
+          sm:w-[50px]
+          sm:min-h-[50px]
+          sm:min-w-[50px]
+        "
+      >
+        <img
+          src="public\assets\srcas-logo.png"
+          alt="SRCAS"
+          className="
+            block
+            h-full
+            w-full
+            rounded-full
+            object-contain
+          "
+          draggable={false}
+        />
+      </div>
+
+      {/* ==================================================
+          SRCAS TECHNO FEAST 2026
+      ================================================== */}
+
+      <div
+        className="
+          flex
+          min-w-0
+          flex-col
+          justify-center
+          leading-none
+        "
+      >
+        <span
+          className="
+            whitespace-nowrap
+            bg-gradient-to-r
+            from-cyan-300
+            via-blue-400
+            to-purple-500
+            bg-clip-text
+            text-[16px]
+            font-black
+            tracking-[0.05em]
+            text-transparent
+            sm:text-[18px]
+          "
+        >
+          SRCAS
+        </span>
+
+        <span
+          className="
+            mt-[5px]
+            whitespace-nowrap
+            text-[8px]
+            font-bold
+            tracking-[0.06em]
+            text-white/60
+            sm:text-[9px]
+          "
+        >
+          TECHNO FEAST 2026
+        </span>
+      </div>
+    </NavLink>
+  );
+}
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] =
-    useState(false);
-
-  const [searchOpen, setSearchOpen] =
-    useState(false);
-
-  /* =======================================================
-     CLOSE MOBILE MENU
-  ======================================================= */
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -73,9 +137,9 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ===================================================
+      {/* ==================================================
           NAVBAR
-      =================================================== */}
+      ================================================== */}
 
       <header
         className="
@@ -84,177 +148,92 @@ export default function Navbar() {
           right-0
           top-0
           z-[9999]
-          w-full
-          border-b
-          border-white/10
-          bg-[#05050d]/95
-          backdrop-blur-xl
+          px-2
+          pt-2
+          sm:px-4
+          sm:pt-3
         "
       >
-
         <nav
           className="
+            relative
+            z-[9999]
             mx-auto
             flex
-            h-[68px]
+            h-[64px]
             w-full
-            max-w-[1600px]
+            max-w-[1500px]
             items-center
+            rounded-2xl
+            border
+            border-white/[0.14]
+            bg-[#080912]/70
             px-3
-            sm:h-[76px]
+            shadow-[0_8px_40px_rgba(0,0,0,0.45)]
+            backdrop-blur-2xl
+            backdrop-saturate-150
+            sm:h-[72px]
             sm:px-5
-            lg:px-8
+            lg:px-6
           "
         >
-
-          {/* =================================================
-              LEFT SIDE
-          ================================================= */}
-
-          <NavLink
-            to="/"
-            onClick={closeMenu}
-            className="
-              flex
-              min-w-0
-              flex-1
-              items-center
-              gap-2
-              sm:gap-3
-            "
-          >
-
-            {/* =================================================
-                SRCAS LOGO
-            ================================================= */}
-
-            <div
-              className="
-                flex
-                h-[46px]
-                w-[46px]
-                flex-shrink-0
-                items-center
-                justify-center
-                overflow-hidden
-                rounded-full
-                bg-white
-                p-1
-                shadow-[0_0_20px_rgba(34,211,238,0.15)]
-                sm:h-[52px]
-                sm:w-[52px]
-              "
-            >
-              <img
-                src="/assets/srcas-logo.png"
-                alt="SRCAS Logo"
-                className="
-                  h-full
-                  w-full
-                  object-contain
-                "
-                onError={(e) => {
-                  /*
-                   * If your project uses another logo path,
-                   * this prevents a broken-image icon.
-                   */
-                  e.currentTarget.style.display =
-                    "none";
-                }}
-              />
-            </div>
-
-            {/* =================================================
-                SRCAS TECHNO FEAST 2026
-            ================================================= */}
-
-            <div
-              className="
-                flex
-                min-w-0
-                flex-col
-                justify-center
-                leading-none
-              "
-            >
-
-              {/* SRCAS */}
-
-              <span
-                className="
-                  whitespace-nowrap
-                  bg-gradient-to-r
-                  from-cyan-300
-                  via-blue-400
-                  to-purple-400
-                  bg-clip-text
-                  text-[12px]
-                  font-black
-                  tracking-[0.12em]
-                  text-transparent
-                  sm:text-[15px]
-                  lg:text-[17px]
-                "
-              >
-                SRCAS
-              </span>
-
-              {/* TECHNO FEAST */}
-
-              <span
-                className="
-                  mt-[4px]
-                  whitespace-nowrap
-                  text-[8px]
-                  font-semibold
-                  uppercase
-                  tracking-[0.12em]
-                  text-white/55
-                  sm:text-[9px]
-                  lg:text-[10px]
-                "
-              >
-                TECHNO FEAST 2026
-              </span>
-
-            </div>
-
-          </NavLink>
-
-          {/* =================================================
-              DESKTOP NAVIGATION
-          ================================================= */}
+          {/* Glass highlight */}
 
           <div
             className="
+              pointer-events-none
+              absolute
+              left-5
+              right-5
+              top-0
+              h-px
+              bg-gradient-to-r
+              from-transparent
+              via-white/40
+              to-transparent
+            "
+          />
+
+          {/* ==================================================
+              BRAND
+          ================================================== */}
+
+          <SRCASBrand />
+
+          {/* ==================================================
+              DESKTOP NAVIGATION
+          ================================================== */}
+
+          <div
+            className="
+              relative
+              z-[100]
+              ml-auto
               hidden
               items-center
               gap-1
               lg:flex
             "
           >
-
             {links.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
-                className={({ isActive }) =>
-                  `
+                className={({ isActive }) => `
                   relative
-                  rounded-full
+                  rounded-xl
                   px-3
                   py-2
-                  text-sm
+                  text-[13px]
                   font-medium
                   transition-all
                   duration-300
                   ${
                     isActive
-                      ? "text-cyan-300"
-                      : "text-white/65 hover:text-white"
+                      ? "bg-white/[0.08] text-cyan-300"
+                      : "text-white/65 hover:bg-white/[0.05] hover:text-white"
                   }
-                  `
-                }
+                `}
               >
                 {({ isActive }) => (
                   <>
@@ -265,14 +244,15 @@ export default function Navbar() {
                         layoutId="navbar-active"
                         className="
                           absolute
-                          bottom-0
+                          bottom-1
                           left-1/2
                           h-[2px]
                           w-5
                           -translate-x-1/2
                           rounded-full
-                          bg-cyan-400
-                          shadow-[0_0_10px_rgba(34,211,238,0.8)]
+                          bg-gradient-to-r
+                          from-cyan-400
+                          to-purple-500
                         "
                       />
                     )}
@@ -280,175 +260,149 @@ export default function Navbar() {
                 )}
               </NavLink>
             ))}
-
           </div>
 
-          {/* =================================================
+          {/* ==================================================
               RIGHT CONTROLS
-          ================================================= */}
+          ================================================== */}
 
           <div
             className="
-              ml-2
+              relative
+              z-[100]
+              ml-auto
               flex
-              flex-shrink-0
+              shrink-0
               items-center
               gap-1.5
-              sm:ml-4
-              sm:gap-2
+              lg:ml-3
             "
           >
-
-            {/* SEARCH */}
+            {/* Search */}
 
             <button
               type="button"
-              onClick={() =>
-                setSearchOpen(true)
-              }
               aria-label="Search"
+              onClick={() => setSearchOpen(true)}
               className="
                 hidden
-                h-10
-                w-10
+                h-9
+                w-9
                 items-center
                 justify-center
-                rounded-full
+                rounded-xl
                 border
                 border-white/10
-                bg-white/5
-                text-white/60
+                bg-white/[0.05]
+                text-white/70
                 transition
-                hover:border-cyan-400/40
+                hover:bg-cyan-400/10
                 hover:text-cyan-300
                 sm:flex
               "
             >
-              <FiSearch size={17} />
+              <FiSearch size={16} />
             </button>
 
-            {/* MUSIC */}
+            {/* Music */}
 
             <div className="hidden sm:block">
               <MusicToggle />
             </div>
 
-            {/* NOTIFICATION */}
+            {/* Notification */}
 
             <div className="hidden sm:block">
               <NotificationBell />
             </div>
 
-            {/* THEME */}
+            {/* Theme */}
 
             <div
               className="
                 flex
-                h-10
-                w-10
+                h-9
+                w-9
                 items-center
                 justify-center
-                overflow-hidden
-                rounded-full
+                rounded-xl
                 border
                 border-white/10
-                bg-white/5
+                bg-white/[0.05]
               "
             >
               <ThemeToggle />
             </div>
 
-            {/* =================================================
-                MOBILE MENU BUTTON
-            ================================================= */}
+            {/* Mobile menu */}
 
             <button
               type="button"
-              aria-label={
-                menuOpen
-                  ? "Close menu"
-                  : "Open menu"
-              }
-              onClick={() =>
-                setMenuOpen(
-                  (value) => !value
-                )
-              }
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMenuOpen((value) => !value)}
               className="
                 flex
-                h-10
-                w-10
+                h-9
+                w-9
+                shrink-0
                 items-center
                 justify-center
-                rounded-full
+                rounded-xl
                 border
                 border-white/10
-                bg-white/5
-                text-white
-                transition-all
-                duration-300
-                hover:border-cyan-400/40
+                bg-white/[0.05]
+                text-white/80
+                transition
+                hover:bg-cyan-400/10
                 hover:text-cyan-300
                 lg:hidden
               "
             >
-
               {menuOpen ? (
-                <FiX size={22} />
+                <FiX size={20} />
               ) : (
-                <FiMenu size={22} />
+                <FiMenu size={20} />
               )}
-
             </button>
-
           </div>
-
         </nav>
 
-        {/* ===================================================
+        {/* ==================================================
             MOBILE MENU
-        =================================================== */}
+        ================================================== */}
 
         <AnimatePresence>
           {menuOpen && (
-
             <motion.div
               initial={{
                 opacity: 0,
-                height: 0,
+                y: -10,
               }}
               animate={{
                 opacity: 1,
-                height: "auto",
+                y: 0,
               }}
               exit={{
                 opacity: 0,
-                height: 0,
-              }}
-              transition={{
-                duration: 0.25,
+                y: -10,
               }}
               className="
+                relative
+                z-[9998]
+                mx-auto
+                mt-2
+                w-full
                 overflow-hidden
-                border-t
+                rounded-2xl
+                border
                 border-white/10
-                bg-[#05050d]/98
+                bg-[#080912]/90
+                shadow-2xl
                 backdrop-blur-2xl
                 lg:hidden
               "
             >
-
-              <div
-                className="
-                  mx-auto
-                  max-w-[1600px]
-                  px-4
-                  py-4
-                "
-              >
-
-                {/* MOBILE SEARCH */}
-
+              <div className="p-3">
                 <button
                   type="button"
                   onClick={() => {
@@ -464,102 +418,74 @@ export default function Navbar() {
                     rounded-xl
                     border
                     border-white/10
-                    bg-white/5
+                    bg-white/[0.05]
                     px-4
                     py-3
-                    text-left
                     text-sm
                     text-white/70
                   "
                 >
-
-                  <FiSearch size={18} />
-
-                  <span>
-                    Search
-                  </span>
-
+                  <FiSearch size={17} />
+                  Search
                 </button>
 
-                {/* MOBILE LINKS */}
-
                 <div className="space-y-1">
-
                   {links.map((link) => (
                     <NavLink
                       key={link.to}
                       to={link.to}
                       onClick={closeMenu}
-                      className={({ isActive }) =>
-                        `
+                      className={({ isActive }) => `
                         block
                         rounded-xl
                         px-4
                         py-3
                         text-sm
-                        font-semibold
+                        font-medium
                         transition
                         ${
                           isActive
                             ? "bg-cyan-400/10 text-cyan-300"
-                            : "text-white/70 hover:bg-white/5 hover:text-white"
+                            : "text-white/70 hover:bg-white/[0.05] hover:text-white"
                         }
-                        `
-                      }
+                      `}
                     >
                       {link.label}
                     </NavLink>
                   ))}
-
                 </div>
-
-                {/* MOBILE TOOLS */}
 
                 <div
                   className="
-                    mt-4
+                    mt-3
                     flex
-                    items-center
                     justify-center
                     gap-3
                     border-t
                     border-white/10
-                    pt-4
+                    pt-3
                   "
                 >
-
                   <MusicToggle />
-
                   <NotificationBell />
-
                 </div>
-
               </div>
-
             </motion.div>
-
           )}
         </AnimatePresence>
-
       </header>
 
-      {/* ===================================================
-          SEARCH OVERLAY
-      =================================================== */}
+      {/* ==================================================
+          SEARCH
+      ================================================== */}
 
       <AnimatePresence>
         {searchOpen && (
-
           <motion.div
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSearchOpen(false)}
             className="
               fixed
               inset-0
@@ -572,11 +498,7 @@ export default function Navbar() {
               pt-24
               backdrop-blur-md
             "
-            onClick={() =>
-              setSearchOpen(false)
-            }
           >
-
             <motion.div
               initial={{
                 opacity: 0,
@@ -593,32 +515,27 @@ export default function Navbar() {
                 y: -20,
                 scale: 0.97,
               }}
-              onClick={(e) =>
-                e.stopPropagation()
-              }
+              onClick={(event) => event.stopPropagation()}
               className="
                 w-full
                 max-w-xl
                 rounded-2xl
                 border
                 border-white/10
-                bg-[#080812]
+                bg-[#080912]/95
                 p-4
                 shadow-2xl
+                backdrop-blur-2xl
               "
             >
-
               <div className="mb-3 flex items-center justify-between">
-
                 <h3 className="font-bold text-white">
                   Search
                 </h3>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setSearchOpen(false)
-                  }
+                  onClick={() => setSearchOpen(false)}
                   className="
                     flex
                     h-9
@@ -633,15 +550,11 @@ export default function Navbar() {
                 >
                   <FiX />
                 </button>
-
               </div>
 
               <SearchBar />
-
             </motion.div>
-
           </motion.div>
-
         )}
       </AnimatePresence>
     </>
