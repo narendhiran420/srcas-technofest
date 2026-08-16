@@ -36,7 +36,8 @@ function SRCASBrand() {
     >
       {/* ==================================================
           SRCAS LOGO
-          File:
+          
+          Actual file:
           public/assets/srcas-logo.png
 
           Vite URL:
@@ -65,7 +66,7 @@ function SRCASBrand() {
         "
       >
         <img
-          src="public\assets\srcas-logo.png"
+          src="/assets/srcas-logo.png"
           alt="SRCAS"
           className="
             block
@@ -177,7 +178,9 @@ export default function Navbar() {
             lg:px-6
           "
         >
-          {/* Glass highlight */}
+          {/* ==================================================
+              GLASS HIGHLIGHT
+          ================================================== */}
 
           <div
             className="
@@ -403,6 +406,8 @@ export default function Navbar() {
               "
             >
               <div className="p-3">
+                {/* Mobile Search */}
+
                 <button
                   type="button"
                   onClick={() => {
@@ -428,6 +433,8 @@ export default function Navbar() {
                   <FiSearch size={17} />
                   Search
                 </button>
+
+                {/* Mobile Links */}
 
                 <div className="space-y-1">
                   {links.map((link) => (
@@ -455,6 +462,8 @@ export default function Navbar() {
                   ))}
                 </div>
 
+                {/* Mobile Controls */}
+
                 <div
                   className="
                     mt-3
@@ -476,7 +485,7 @@ export default function Navbar() {
       </header>
 
       {/* ==================================================
-          SEARCH
+          SEARCH MODAL
       ================================================== */}
 
       <AnimatePresence>
