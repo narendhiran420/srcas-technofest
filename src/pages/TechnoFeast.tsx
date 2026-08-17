@@ -47,7 +47,7 @@ export default function TechnoFeast() {
           <span className="gradient-text">Techno Feast</span> 2026
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-sm text-paper-100/65">
-          A one-day celebration of technology and creativity hosted by the Department of B.Sc. Information
+          A one-day celebration of technology and creativity hosted by the PG & Research Department Information
           Technology — featuring poster design, paper presentation, AI prompt engineering, debugging, and fun
           non-technical events.
         </p>

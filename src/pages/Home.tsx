@@ -24,8 +24,8 @@ export default function Home() {
       ========================================================= */}
 
       <SEO
-        title="Department of B.Sc. Information Technology — SRCAS Coimbatore"
-        description="Official website of the Department of B.Sc. Information Technology, Sri Ramakrishna College of Arts & Science, Coimbatore. Techno Feast 2026 on 18 September 2026."
+        title="PG & Research Department of Information Technology — SRCAS Coimbatore"
+        description="Official website of the PG & Research Department Information Technology, Sri Ramakrishna College of Arts & Science, Coimbatore. Techno Feast 2026 on 18 September 2026."
       />
 
       {/* =========================================================

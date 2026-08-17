@@ -14,7 +14,7 @@ export default function Contact() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
-      <SEO title="Contact | Dept. of B.Sc. IT, SRCAS" description="Get in touch with the Department of B.Sc. Information Technology at Sri Ramakrishna College of Arts &  Science, Coimbatore." />
+      <SEO title="Contact | Dept. of B.Sc. IT, SRCAS" description="Get in touch with the PG & Research Department Information Technology at Sri Ramakrishna College of Arts &  Science, Coimbatore." />
       <Reveal className="text-center">
         <span className="section-eyebrow">Get in Touch</span>
         <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">Contact Us</h1>
