@@ -11,7 +11,7 @@ export default function Footer() {
             <span className="gradient-text">B.Sc. IT · SRCAS</span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-paper-100/60">
-            Department of B.Sc. Information Technology, Sri Ramakrishna College of Arts &  Science, Coimbatore.
+            PG & Research Department Information Technology, Sri Ramakrishna College of Arts &  Science, Coimbatore.
           </p>
           <div className="mt-5 flex gap-3">
             {[FiInstagram, FiLinkedin, FiYoutube].map((Icon, i) => (
@@ -55,7 +55,7 @@ export default function Footer() {
       </div>
 
       <div className="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-paper-100/50 sm:flex-row">
-        <p>© {new Date().getFullYear()} Department of B.Sc. Information Technology, SRCAS Coimbatore. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} PG & Research Department Information Technology, SRCAS Coimbatore. All rights reserved.</p>
         <p>Designed &amp; developed by the B.Sc. IT Web Team</p>
       </div>
     </footer>

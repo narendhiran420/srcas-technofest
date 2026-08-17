@@ -4,7 +4,7 @@ import SEO from '../components/SEO';
 export default function About() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
-      <SEO title="About Department | Dept. of B.Sc. IT, SRCAS" description="Learn about the Department of B.Sc. Information Technology at Sri Ramakrishna College of Arts &  Science, Coimbatore — vision, mission, and values." />
+      <SEO title="About Department | Dept. of B.Sc. IT, SRCAS" description="Learn about the PG & Research Department Information Technology at Sri Ramakrishna College of Arts &  Science, Coimbatore — vision, mission, and values." />
       <Reveal className="text-center">
         <span className="section-eyebrow">Who We Are</span>
         <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">About the Department</h1>
@@ -12,7 +12,7 @@ export default function About() {
 
       <Reveal delay={0.15} className="glass-card mt-10 p-8 leading-relaxed text-paper-100/75">
         <p>
-          The Department of B.Sc. Information Technology at Sri Ramakrishna College of Arts &  Science, Coimbatore,
+          The PG & Research Department Information Technology at Sri Ramakrishna College of Arts &  Science, Coimbatore,
           is committed to building industry-ready technologists through a curriculum that blends strong fundamentals
           with hands-on exposure to modern software development, cloud computing, data science, and emerging
           technologies.

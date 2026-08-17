@@ -539,7 +539,7 @@ export default function Loader({ show }: LoaderProps) {
                 ease: "easeInOut",
               }}
             >
-              Department of B.Sc. Information Technology
+              PG & Research Department Information Technology
             </motion.p>
 
           </div>
